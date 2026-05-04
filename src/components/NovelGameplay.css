@@ -1,0 +1,321 @@
+.novel-gameplay {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.novel-gameplay.loading {
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner {
+  color: #667eea;
+  font-size: 1.5rem;
+}
+
+.gameplay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid #2d3748;
+}
+
+.back-btn {
+  padding: 0.5rem 1rem;
+  border: 2px solid #2d3748;
+  border-radius: 8px;
+  background: transparent;
+  color: #888;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  border-color: #667eea;
+  color: #fff;
+}
+
+.chapter-info {
+  text-align: center;
+  flex: 1;
+}
+
+.chapter-info h2 {
+  color: #fff;
+  font-size: 1.3rem;
+  margin-bottom: 0.25rem;
+}
+
+.character-badge {
+  color: #667eea;
+  font-size: 0.9rem;
+}
+
+.autoplay-btn {
+  padding: 0.5rem 1rem;
+  border: 2px solid #2d3748;
+  border-radius: 8px;
+  background: transparent;
+  color: #888;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.autoplay-btn:hover {
+  border-color: #48bb78;
+  color: #48bb78;
+}
+
+.autoplay-btn.playing {
+  border-color: #48bb78;
+  color: #48bb78;
+  background: rgba(72, 187, 120, 0.1);
+}
+
+.error-message {
+  color: #e94560;
+  font-size: 1rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+.gameplay-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.paragraphs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.story-paragraph {
+  color: #d4d4d4;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  text-align: justify;
+}
+
+.story-paragraph.branch-text {
+  color: #667eea;
+  font-style: italic;
+  border-left: 3px solid #667eea;
+  padding-left: 1rem;
+  margin-left: 0.5rem;
+}
+
+.continue-hint {
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+  padding: 1.5rem;
+  cursor: pointer;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.gameplay-controls {
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid #2d3748;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.control-btn {
+  padding: 0.75rem 3rem;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.control-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Choice Point Modal */
+.choice-point-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.choice-point-modal {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid #667eea;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.choice-point-modal.locked {
+  border-color: #e94560;
+  text-align: center;
+}
+
+.lock-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.lock-message {
+  color: #e94560;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.choice-title {
+  color: #fff;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+.choice-situation {
+  color: #888;
+  font-size: 1rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+.alternatives-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.alternative-btn {
+  background: rgba(45, 55, 72, 0.4);
+  border: 2px solid #2d3748;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.alternative-btn:hover:not(:disabled) {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.alternative-btn.selected {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.2);
+}
+
+.alternative-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.alt-type {
+  display: inline-block;
+  background: rgba(102, 126, 234, 0.2);
+  color: #667eea;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  width: fit-content;
+}
+
+.alt-desc {
+  color: #d4d4d4;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.branch-result {
+  background: rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.branch-label {
+  color: #667eea;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.branch-text {
+  color: #d4d4d4;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.generating {
+  text-align: center;
+  padding: 1rem;
+}
+
+.generating-text {
+  color: #667eea;
+  font-size: 1rem;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.continue-btn {
+  width: 100%;
+  padding: 0.875rem 2rem;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.continue-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}

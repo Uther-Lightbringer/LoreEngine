@@ -1,0 +1,295 @@
+.novel-progress {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding: 2rem;
+}
+
+.novel-progress.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner {
+  color: #667eea;
+  font-size: 1.5rem;
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.progress-header h2 {
+  color: #fff;
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.back-btn {
+  padding: 0.5rem 1rem;
+  border: 2px solid #2d3748;
+  border-radius: 8px;
+  background: transparent;
+  color: #888;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  border-color: #667eea;
+  color: #fff;
+}
+
+.export-btn {
+  padding: 0.5rem 1rem;
+  border: 2px solid #2d3748;
+  border-radius: 8px;
+  background: transparent;
+  color: #888;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.export-btn:hover {
+  border-color: #48bb78;
+  color: #48bb78;
+}
+
+.error-message {
+  color: #e94560;
+  font-size: 1rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.novel-summary {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(45, 55, 72, 0.3);
+  border-radius: 12px;
+}
+
+.novel-summary h3 {
+  color: #fff;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.novel-type {
+  color: #888;
+  font-size: 1rem;
+}
+
+.stats-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: rgba(45, 55, 72, 0.3);
+  border: 2px solid #2d3748;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.stat-value {
+  color: #667eea;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.stat-bar {
+  height: 6px;
+  background: rgba(45, 55, 72, 0.5);
+  border-radius: 3px;
+  margin-top: 0.75rem;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transition: width 0.3s ease;
+}
+
+.unlocked-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(72, 187, 120, 0.1);
+  border: 1px solid rgba(72, 187, 120, 0.3);
+  border-radius: 12px;
+}
+
+.unlocked-section h4 {
+  color: #48bb78;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.unlocked-characters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.unlocked-tag {
+  background: rgba(72, 187, 120, 0.2);
+  color: #48bb78;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.chapter-details {
+  margin-bottom: 2rem;
+}
+
+.chapter-details h4 {
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.chapter-progress-item {
+  background: rgba(45, 55, 72, 0.3);
+  border: 2px solid #2d3748;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.chapter-progress-item.completed {
+  border-color: #48bb78;
+}
+
+.chapter-progress-item.in-progress {
+  border-color: #f6ad55;
+}
+
+.chapter-header-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.chapter-number {
+  background: rgba(102, 126, 234, 0.2);
+  color: #667eea;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.chapter-title {
+  flex: 1;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.chapter-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.chapter-status.status-completed {
+  background: rgba(72, 187, 120, 0.2);
+  color: #48bb78;
+}
+
+.chapter-status.status-progress {
+  background: rgba(246, 173, 85, 0.2);
+  color: #f6ad55;
+}
+
+.chapter-status.status-pending {
+  background: rgba(45, 55, 72, 0.5);
+  color: #888;
+}
+
+.character-progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-left: 1rem;
+}
+
+.character-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  background: rgba(26, 26, 46, 0.3);
+}
+
+.character-progress-row.explored {
+  background: rgba(72, 187, 120, 0.1);
+}
+
+.char-name {
+  color: #d4d4d4;
+  font-size: 0.95rem;
+}
+
+.char-role {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.char-status {
+  margin-left: auto;
+  font-size: 0.85rem;
+}
+
+.char-status.explored {
+  color: #48bb78;
+}
+
+.char-status.not-explored {
+  color: #666;
+}
+
+.branch-count {
+  color: #667eea;
+  font-size: 0.85rem;
+}
+
+.progress-actions {
+  text-align: center;
+  padding-top: 1rem;
+}
+
+.refresh-btn {
+  padding: 0.75rem 2rem;
+  border: 2px solid #2d3748;
+  border-radius: 10px;
+  background: transparent;
+  color: #888;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:hover {
+  border-color: #667eea;
+  color: #fff;
+}

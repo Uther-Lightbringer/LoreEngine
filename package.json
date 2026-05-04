@@ -1,0 +1,30 @@
+{
+  "name": "lore-engine",
+  "version": "1.0.0",
+  "description": "AI-driven interactive visual novel engine",
+  "scripts": {
+    "install:all": "npm install && cd server && npm install",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "vite --port 3000",
+    "dev:backend": "cd server && npm start",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "npm run build && npm run start:prod",
+    "start:prod": "concurrently \"vite preview --port 3000\" \"cd server && npm start\"",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "concurrently": "^8.2.2",
+    "vite": "^8.0.1"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  }
+}

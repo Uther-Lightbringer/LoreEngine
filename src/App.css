@@ -1,0 +1,63 @@
+.app {
+  display: flex;
+  flex-direction: column;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: #666;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+}
+
+.user-info {
+  font-size: 14px;
+  color: #333;
+}
+
+.admin-badge {
+  margin-left: 8px;
+  padding: 2px 8px;
+  background: #e74c3c;
+  color: white;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.top-bar-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.top-bar-btn {
+  padding: 6px 16px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.top-bar-btn:hover {
+  background: #5a6fd6;
+}
+
+.top-bar-btn.logout {
+  background: #95a5a6;
+}
+
+.top-bar-btn.logout:hover {
+  background: #7f8c8d;
+}

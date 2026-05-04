@@ -1,0 +1,180 @@
+.main-menu {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding: 2rem;
+}
+
+.main-menu h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #e94560, #f39c12);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.main-menu .subtitle {
+  font-size: 1.2rem;
+  color: #888;
+  margin-bottom: 4rem;
+}
+
+.menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.menu-btn {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #e94560, #c73e54);
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+}
+
+.menu-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5);
+}
+
+.menu-btn.secondary {
+  background: linear-gradient(135deg, #4a5568, #2d3748);
+  box-shadow: 0 4px 15px rgba(45, 55, 72, 0.3);
+}
+
+.menu-btn.secondary:hover {
+  box-shadow: 0 6px 20px rgba(45, 55, 72, 0.5);
+}
+
+.menu-btn.tertiary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.menu-btn.tertiary:hover {
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.file-input-label {
+  display: block;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4a5568, #2d3748);
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(45, 55, 72, 0.3);
+}
+
+.file-input-label:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(45, 55, 72, 0.5);
+}
+
+.file-input {
+  display: none;
+}
+
+.load-error {
+  margin-top: 1rem;
+  color: #e94560;
+  text-align: center;
+}
+
+/* 游戏模式选择弹窗 */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid #2d3748;
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+}
+
+.modal-content h2 {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 1.5rem;
+}
+
+.game-mode-modal .game-mode-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.game-mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  border: 2px solid #2d3748;
+  border-radius: 12px;
+  background: rgba(45, 55, 72, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.game-mode-btn:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+}
+
+.game-mode-btn .mode-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.game-mode-btn .mode-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.game-mode-btn .mode-desc {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.modal-close-btn {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  background: #2d3748;
+  color: #888;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-close-btn:hover {
+  background: #3d4758;
+  color: #fff;
+}

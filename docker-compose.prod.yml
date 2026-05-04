@@ -1,0 +1,31 @@
+# ============================================
+# AI Visual Novel - Production Deployment
+# ============================================
+# Usage:
+#   docker build -t ai-visual-novel .
+#   docker run -d -p 8080:3001 --name visual-novel ai-visual-novel
+#
+# Or use docker-compose:
+#   docker-compose -f docker-compose.prod.yml up -d
+# ============================================
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ai-visual-novel:latest
+    container_name: ai-visual-novel
+    ports:
+      - "8080:3001"
+    volumes:
+      # Mount data directory for persistence
+      - novel-data:/app/server/data
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    restart: unless-stopped
+
+volumes:
+  novel-data:
+    driver: local

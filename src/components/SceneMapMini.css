@@ -1,0 +1,138 @@
+/* src/components/SceneMapMini.css */
+
+.scene-map-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.2s ease;
+}
+
+.scene-map-panel {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid #667eea;
+  border-radius: 16px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 500px;
+  max-height: 70vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.scene-map-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.scene-map-icon {
+  font-size: 1.5rem;
+}
+
+.scene-map-title {
+  flex: 1;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+.close-btn:hover {
+  color: #e94560;
+}
+
+.scene-map-content {
+  flex: 1;
+  position: relative;
+  min-height: 250px;
+  background: rgba(26, 26, 46, 0.5);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.scene-connections {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.scene-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+.scene-node:hover {
+  background: rgba(102, 126, 234, 0.2);
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.scene-node.current .scene-node-icon {
+  font-size: 2rem;
+}
+
+.scene-node-icon {
+  font-size: 1.5rem;
+}
+
+.scene-node-name {
+  color: #d4d4d4;
+  font-size: 0.8rem;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.current-badge {
+  background: #667eea;
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.scene-map-footer {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.scene-hint {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

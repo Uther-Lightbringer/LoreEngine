@@ -1,0 +1,186 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.api-settings {
+  background: #1a1a2e;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.api-settings .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: #16213e;
+  border-bottom: 1px solid #0f3460;
+}
+
+.api-settings .header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #eaeaea;
+}
+
+.api-settings .close-btn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.api-settings .close-btn:hover {
+  color: #fff;
+}
+
+.api-settings .loading {
+  padding: 40px;
+  text-align: center;
+  color: #888;
+}
+
+.api-settings .error-msg {
+  margin: 16px 24px 0;
+  padding: 10px 16px;
+  background: rgba(255, 82, 82, 0.2);
+  border: 1px solid #ff5252;
+  border-radius: 6px;
+  color: #ff5252;
+  font-size: 14px;
+}
+
+.api-settings .success-msg {
+  margin: 16px 24px 0;
+  padding: 10px 16px;
+  background: rgba(82, 255, 82, 0.2);
+  border: 1px solid #52ff52;
+  border-radius: 6px;
+  color: #52ff52;
+  font-size: 14px;
+}
+
+.api-settings .settings-content {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.api-settings .config-section {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #0f3460;
+}
+
+.api-settings .config-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.api-settings .config-section h3 {
+  margin: 0 0 16px;
+  font-size: 15px;
+  color: #e94560;
+  font-weight: 500;
+}
+
+.api-settings .form-group {
+  margin-bottom: 14px;
+}
+
+.api-settings .form-group:last-child {
+  margin-bottom: 0;
+}
+
+.api-settings .form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #888;
+}
+
+.api-settings .form-group input,
+.api-settings .form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  background: #0f3460;
+  border: 1px solid #1a1a2e;
+  border-radius: 6px;
+  color: #eaeaea;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.api-settings .form-group input:focus,
+.api-settings .form-group select:focus {
+  outline: none;
+  border-color: #e94560;
+}
+
+.api-settings .form-group input:disabled {
+  background: #16213e;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.api-settings .footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  background: #16213e;
+  border-top: 1px solid #0f3460;
+}
+
+.api-settings .cancel-btn {
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: #888;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.api-settings .cancel-btn:hover {
+  border-color: #888;
+  color: #fff;
+}
+
+.api-settings .save-btn {
+  padding: 10px 24px;
+  background: #e94560;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.api-settings .save-btn:hover {
+  background: #d63850;
+}
+
+.api-settings .save-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
+}

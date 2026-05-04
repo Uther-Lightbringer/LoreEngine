@@ -1,0 +1,752 @@
+/* ChapterStoryRenderer 样式 */
+
+.chapter-story-renderer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0a0a0f;
+  z-index: 1000;
+}
+
+/* 场景背景 */
+.chapter-story-renderer .scene-background {
+  flex: 1;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* 场景指示器 */
+.chapter-story-renderer .scene-indicator {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.chapter-story-renderer .scene-indicator .scene-name {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.chapter-story-renderer .scene-map-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.chapter-story-renderer .scene-map-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* 回合指示器 */
+.chapter-story-renderer .turn-indicator {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.chapter-story-renderer .turn-indicator .turn-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+}
+
+.chapter-story-renderer .turn-indicator .turn-count {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chapter-story-renderer .turn-indicator .intervention-badge {
+  background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* 角色立绘 */
+.chapter-story-renderer .character-portrait {
+  position: absolute;
+  right: 20px;
+  bottom: 200px;
+  width: 200px;
+  height: 400px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.chapter-story-renderer .character-portrait img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5));
+}
+
+/* 主角卡片 */
+.chapter-story-renderer .protagonist-card {
+  position: absolute;
+  top: 80px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chapter-story-renderer .protagonist-card .protagonist-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chapter-story-renderer .protagonist-card .protagonist-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.chapter-story-renderer .protagonist-card .avatar-placeholder {
+  font-size: 24px;
+}
+
+.chapter-story-renderer .protagonist-card .protagonist-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.chapter-story-renderer .protagonist-card .protagonist-name {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.chapter-story-renderer .protagonist-card .protagonist-title {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+}
+
+/* 对话区域 */
+.chapter-story-renderer .dialogue-area {
+  position: absolute;
+  bottom: 140px;
+  left: 20px;
+  right: 240px;
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 对话历史 */
+.chapter-story-renderer .dialogue-history {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chapter-story-renderer .dialogue-item {
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  max-width: 80%;
+}
+
+.chapter-story-renderer .dialogue-item.player {
+  align-self: flex-end;
+  background: rgba(25, 118, 210, 0.8);
+  border-bottom-right-radius: 4px;
+}
+
+.chapter-story-renderer .dialogue-item.narrator {
+  align-self: center;
+  max-width: 90%;
+  background: rgba(60, 60, 60, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chapter-story-renderer .dialogue-item.current {
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(100, 100, 255, 0.3);
+}
+
+.chapter-story-renderer .dialogue-speaker {
+  color: #64b5f6;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.chapter-story-renderer .dialogue-item.narrator .dialogue-speaker {
+  color: #ffd54f;
+}
+
+.chapter-story-renderer .dialogue-text {
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.chapter-story-renderer .typing-cursor {
+  animation: blink 0.8s infinite;
+  color: #64b5f6;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* 继续提示 */
+.chapter-story-renderer .continue-hint {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+/* 生成中提示 */
+.chapter-story-renderer .generating-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.chapter-story-renderer .generating-text {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  animation: pulse 1.5s infinite;
+}
+
+/* 自由输入区域 */
+.chapter-story-renderer .free-input-area {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chapter-story-renderer .free-input-area .input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.chapter-story-renderer .free-input {
+  flex: 1;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.chapter-story-renderer .free-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.chapter-story-renderer .free-input:focus {
+  border-color: rgba(100, 149, 237, 0.6);
+}
+
+.chapter-story-renderer .free-input.action-input {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.chapter-story-renderer .submit-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.chapter-story-renderer .submit-btn:hover:not(:disabled) {
+  transform: scale(1.02);
+}
+
+.chapter-story-renderer .submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 分支选择面板 */
+.chapter-story-renderer .branch-selection-panel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.chapter-story-renderer .branch-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.chapter-story-renderer .branch-icon {
+  font-size: 24px;
+}
+
+.chapter-story-renderer .branch-title {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.chapter-story-renderer .branch-description {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 20px;
+}
+
+.chapter-story-renderer .branch-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chapter-story-renderer .branch-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chapter-story-renderer .branch-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(100, 149, 237, 0.5);
+  transform: translateX(5px);
+}
+
+.chapter-story-renderer .branch-option .branch-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chapter-story-renderer .branch-option .branch-type-badge {
+  font-size: 14px;
+}
+
+.chapter-story-renderer .branch-option .branch-type {
+  color: #64b5f6;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.chapter-story-renderer .branch-option.generated .branch-type {
+  color: #ffd54f;
+}
+
+.chapter-story-renderer .branch-option .branch-desc {
+  color: #fff;
+  font-size: 15px;
+}
+
+.chapter-story-renderer .branch-option .branch-hint {
+  display: block;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  margin-top: 4px;
+  padding-left: 22px;
+}
+
+/* 自定义分支输入 */
+.chapter-story-renderer .custom-branch-input {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chapter-story-renderer .custom-branch-input input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+}
+
+.chapter-story-renderer .custom-branch-input input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.chapter-story-renderer .custom-branch-input input:focus {
+  border-color: rgba(100, 149, 237, 0.6);
+}
+
+/* 控制栏 */
+.chapter-story-renderer .renderer-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.8);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chapter-story-renderer .control-btn {
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chapter-story-renderer .control-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.chapter-story-renderer .chapter-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chapter-story-renderer .chapter-title {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chapter-story-renderer .progress-info {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+}
+
+/* 适应级别控制 */
+.chapter-story-renderer .adaptation-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chapter-story-renderer .adaptation-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+}
+
+.chapter-story-renderer .adaptation-btn {
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chapter-story-renderer .adaptation-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.chapter-story-renderer .adaptation-btn.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-color: transparent;
+  color: #fff;
+}
+
+/* 场景地图弹窗 */
+.chapter-story-renderer .scene-map-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.chapter-story-renderer .scene-map-panel {
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  background: rgba(20, 20, 30, 0.95);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.chapter-story-renderer .scene-map-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chapter-story-renderer .scene-map-header .scene-map-icon {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+.chapter-story-renderer .scene-map-header .scene-map-title {
+  flex: 1;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chapter-story-renderer .scene-map-header .close-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.chapter-story-renderer .scene-map-header .close-btn:hover {
+  color: #fff;
+}
+
+.chapter-story-renderer .scene-map-list {
+  padding: 16px;
+  max-height: calc(80vh - 60px);
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.chapter-story-renderer .scene-map-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.chapter-story-renderer .scene-map-item.current {
+  border-color: #64b5f6;
+}
+
+.chapter-story-renderer .scene-map-item .scene-thumbnail {
+  height: 100px;
+  background-size: cover;
+  background-position: center;
+}
+
+.chapter-story-renderer .scene-map-item .scene-info {
+  padding: 12px;
+}
+
+.chapter-story-renderer .scene-map-item .scene-title {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.chapter-story-renderer .scene-map-item .scene-location {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+}
+
+.chapter-story-renderer .scene-map-item .current-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 2px 8px;
+  background: #64b5f6;
+  color: #fff;
+  font-size: 10px;
+  border-radius: 10px;
+}
+
+/* 章节回顾模式 */
+.chapter-story-renderer .chapter-review-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+}
+
+.chapter-story-renderer .chapter-review-panel {
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  background: rgba(20, 20, 30, 0.98);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.chapter-story-renderer .review-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chapter-story-renderer .review-icon {
+  font-size: 24px;
+}
+
+.chapter-story-renderer .review-title {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.chapter-story-renderer .review-content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chapter-story-renderer .review-item {
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chapter-story-renderer .review-item.player {
+  background: rgba(25, 118, 210, 0.3);
+  align-self: flex-end;
+  max-width: 85%;
+}
+
+.chapter-story-renderer .review-item.narrator {
+  background: rgba(60, 60, 60, 0.5);
+  align-self: center;
+  max-width: 95%;
+  text-align: center;
+}
+
+.chapter-story-renderer .review-speaker {
+  color: #64b5f6;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.chapter-story-renderer .review-item.narrator .review-speaker {
+  color: #ffd54f;
+}
+
+.chapter-story-renderer .review-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.chapter-story-renderer .review-footer {
+  padding: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.chapter-story-renderer .review-hint {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+}

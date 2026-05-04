@@ -1,0 +1,18 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy server package files
+COPY server/package*.json ./server/
+RUN cd ./server && npm install
+
+# Copy server source code
+COPY server/ ./server/
+
+# Create data directory
+RUN mkdir -p server/data
+
+EXPOSE 3001
+
+WORKDIR /app/server
+CMD ["node", "index.js"]

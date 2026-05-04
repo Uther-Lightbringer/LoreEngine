@@ -1,0 +1,688 @@
+/* src/components/ImmersiveStoryRenderer.css */
+
+.immersive-story-renderer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  background: #0a0a0f;
+  overflow: hidden;
+}
+
+.immersive-main {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.immersive-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+.scene-map-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 100;
+  background: rgba(26, 26, 46, 0.85);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.scene-map-btn:hover {
+  background: rgba(102, 126, 234, 0.3);
+  transform: scale(1.05);
+}
+
+.immersive-controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.9);
+  border-top: 1px solid #2d3748;
+  z-index: 1000;
+}
+
+.control-btn {
+  padding: 0.5rem 1rem;
+  border: 2px solid #2d3748;
+  border-radius: 8px;
+  background: transparent;
+  color: #888;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.control-btn:hover {
+  border-color: #667eea;
+  color: #fff;
+}
+
+.control-btn.auto.playing {
+  border-color: #48bb78;
+  color: #48bb78;
+  background: rgba(72, 187, 120, 0.1);
+}
+
+/* 占位组件样式 */
+.character-portrait-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40vh;
+  color: #666;
+  font-size: 1.2rem;
+}
+
+/* 旁白卡片 */
+.narrative-card {
+  background: rgba(26, 26, 46, 0.9);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin: 0.5rem 1rem;
+  max-width: 90%;
+  animation: cardSlideIn 0.3s ease;
+}
+
+.narrative-card-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.narrative-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.narrative-text {
+  color: #d4d4d4;
+  font-size: 1rem;
+  line-height: 1.7;
+  text-align: justify;
+  margin: 0;
+}
+
+/* 动作卡片 */
+.action-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(45, 55, 72, 0.5);
+  border-left: 3px solid #f6ad55;
+  border-radius: 0 12px 12px 0;
+  padding: 0.75rem 1.25rem;
+  margin: 0.5rem 1rem;
+  max-width: 90%;
+  animation: cardSlideIn 0.3s ease;
+}
+
+.action-arrow {
+  color: #f6ad55;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.action-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.action-character {
+  color: #667eea;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.action-text {
+  color: #a0aec0;
+  font-size: 0.95rem;
+  font-style: italic;
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dialogue-box {
+  background: rgba(26, 26, 46, 0.95);
+  border: 2px solid rgba(102, 126, 234, 0.5);
+  border-radius: 16px;
+  padding: 1rem 1.5rem;
+  margin: 0.5rem 1rem;
+  max-width: 90%;
+  animation: dialogueAppear 0.3s ease;
+}
+
+.dialogue-box.player {
+  border-color: rgba(72, 187, 120, 0.5);
+  background: rgba(26, 46, 36, 0.95);
+}
+
+.dialogue-speaker {
+  color: #667eea;
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.dialogue-box.player .dialogue-speaker {
+  color: #48bb78;
+  border-bottom-color: rgba(72, 187, 120, 0.3);
+}
+
+.dialogue-text {
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+@keyframes dialogueAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.input-area {
+  position: fixed;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  background: rgba(20, 20, 35, 0.95);
+  padding: 1rem;
+  border-top: 1px solid rgba(102, 126, 234, 0.2);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.quick-actions button {
+  padding: 0.5rem;
+  background: rgba(45, 55, 72, 0.5);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 4px;
+  color: #888;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.quick-actions button:hover:not(:disabled) {
+  background: rgba(102, 126, 234, 0.3);
+}
+
+.quick-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input-area input {
+  flex: 1;
+  padding: 0.75rem;
+  background: rgba(45, 55, 72, 0.5);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.input-area input::placeholder {
+  color: #666;
+}
+
+.input-area input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.input-area > button:last-child {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.input-area > button:last-child:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* TimelineSidebar 集成 */
+.immersive-story-renderer:has(.timeline-sidebar) .immersive-main {
+  margin-left: 200px;
+}
+
+/* 输入区域 */
+.input-area-container {
+  position: fixed;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: rgba(20, 20, 35, 0.98);
+  border-top: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.free-input-row {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.free-input-row .free-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: rgba(45, 55, 72, 0.5);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.free-input-row .free-input::placeholder {
+  color: #666;
+}
+
+.free-input-row .free-input:focus {
+  border-color: #667eea;
+}
+
+.submit-btn {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 大立绘组件 */
+.character-portrait-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  min-height: 40vh;
+  max-height: 50vh;
+  z-index: 10;
+  transition: opacity 0.5s ease;
+}
+
+.character-portrait-container.idle {
+  opacity: 0.3;
+}
+
+.character-portrait-container.speaking {
+  opacity: 1;
+  animation: portraitAppear 0.5s ease;
+}
+
+.portrait-image {
+  max-height: 100%;
+  max-width: 70%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.5));
+  border-radius: 16px;
+}
+
+.portrait-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  background: rgba(45, 55, 72, 0.5);
+  border-radius: 16px;
+  border: 2px dashed rgba(102, 126, 234, 0.3);
+}
+
+.placeholder-icon {
+  font-size: 4rem;
+  opacity: 0.5;
+}
+
+.placeholder-name {
+  color: #888;
+  font-size: 1.2rem;
+}
+
+@keyframes portraitAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 分支选择弹窗 */
+.choice-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  animation: fadeIn 0.3s ease;
+}
+
+.choice-panel {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid #667eea;
+  border-radius: 20px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.choice-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.choice-icon {
+  font-size: 1.5rem;
+}
+
+.choice-title {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+}
+
+.choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.choice-btn {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: rgba(45, 55, 72, 0.5);
+  border: 2px solid #2d3748;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.choice-btn:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.2);
+  transform: translateX(4px);
+}
+
+.choice-type {
+  display: inline-block;
+  background: rgba(102, 126, 234, 0.2);
+  color: #667eea;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  width: fit-content;
+}
+
+.choice-desc {
+  color: #d4d4d4;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.choice-hint {
+  color: #888;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.custom-choice {
+  display: flex;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.custom-choice input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: rgba(45, 55, 72, 0.5);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.custom-choice input::placeholder {
+  color: #666;
+}
+
+.custom-choice input:focus {
+  border-color: #667eea;
+}
+
+.custom-choice button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ========== 加载状态 ========== */
+.generating-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  animation: fadeIn 0.3s ease;
+}
+
+.generating-spinner {
+  color: #667eea;
+  font-size: 1.2rem;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* ========== 响应式支持 ========== */
+@media (max-width: 768px) {
+  /* Timeline侧边栏响应式 */
+  .immersive-story-renderer:has(.timeline-sidebar) .immersive-main {
+    margin-left: 0;
+  }
+
+  .timeline-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 60px !important;
+    z-index: 200;
+    background: rgba(26, 26, 46, 0.95);
+    border-right: 1px solid rgba(102, 126, 234, 0.2);
+  }
+
+  .timeline-sidebar .timeline-title,
+  .timeline-sidebar .timeline-preview {
+    display: none;
+  }
+
+  .timeline-sidebar .timeline-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* 场景地图弹窗响应式 */
+  .scene-map-panel {
+    width: 95%;
+    max-width: 95%;
+    margin: 0 auto;
+  }
+
+  /* 选择弹窗响应式 */
+  .choice-panel {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .choice-title {
+    font-size: 1.2rem;
+  }
+
+  /* 输入区域响应式 */
+  .input-area-container {
+    bottom: 50px;
+  }
+
+  .free-input-row {
+    padding: 0.5rem;
+  }
+
+  .submit-btn {
+    padding: 0.5rem 1rem;
+  }
+
+  /* 控制栏响应式 */
+  .immersive-controls {
+    padding: 0.75rem 1rem;
+  }
+
+  .control-btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* 更小屏幕进一步调整 */
+  .scene-map-btn {
+    font-size: 1rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .choice-btn {
+    padding: 0.75rem 1rem;
+  }
+
+  .choice-desc {
+    font-size: 0.9rem;
+  }
+}
+
+/* ========== 滚动条样式统一 ========== */
+.immersive-story-renderer ::-webkit-scrollbar,
+.choice-panel::-webkit-scrollbar,
+.scene-map-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.immersive-story-renderer ::-webkit-scrollbar-track,
+.choice-panel::-webkit-scrollbar-track,
+.scene-map-panel::-webkit-scrollbar-track {
+  background: rgba(45, 55, 72, 0.3);
+  border-radius: 3px;
+}
+
+.immersive-story-renderer ::-webkit-scrollbar-thumb,
+.choice-panel::-webkit-scrollbar-thumb,
+.scene-map-panel::-webkit-scrollbar-thumb {
+  background: rgba(102, 126, 234, 0.5);
+  border-radius: 3px;
+}
+
+.immersive-story-renderer ::-webkit-scrollbar-thumb:hover,
+.choice-panel::-webkit-scrollbar-thumb:hover,
+.scene-map-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(102, 126, 234, 0.8);
+}
