@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGameState } from '../store/gameState.jsx';
 import { generateWithAI, MAX_TOKENS } from '../services/aiService.js';
 import { generateImage } from '../services/imageService.js';
@@ -7,7 +8,8 @@ import ImageModal from './ImageModal.jsx';
 import './ProtagonistCreation.css';
 import './WorldCreation.css';
 
-const ProtagonistCreation = ({ onNext, onBack, onOpenApiSettings }) => {
+const ProtagonistCreation = ({ onOpenApiSettings }) => {
+  const navigate = useNavigate();
   const { state, dispatch } = useGameState();
 
   // 找到已有的主角，或者创建新的
@@ -234,14 +236,14 @@ ${state.world.description || ''}
       }
     });
 
-    onNext();
+    navigate('/create/character');
   };
 
   return (
     <div className="protagonist-creation">
       <div className="creation-container">
         <div className="progress-steps">
-          <div className="step" onClick={onBack} style={{ cursor: 'pointer' }}>
+          <div className="step" onClick={() => navigate('/create/world')} style={{ cursor: 'pointer' }}>
             <span className="step-number">1</span>
             <span>世界观</span>
           </div>
@@ -262,7 +264,7 @@ ${state.world.description || ''}
         <div className="creation-header">
           <h2>设定你是谁</h2>
           <div className="nav-buttons">
-            <button className="nav-btn back" onClick={onBack}>上一步</button>
+            <button className="nav-btn back" onClick={() => navigate('/create/world')}>上一步</button>
             <button className="nav-btn next" onClick={handleNext}>下一步: 其他角色</button>
           </div>
         </div>

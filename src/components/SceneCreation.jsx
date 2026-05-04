@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGameState } from '../store/gameState.jsx';
 import { generateWithAI, MAX_TOKENS } from '../services/aiService.js';
 import { generateImage } from '../services/imageService.js';
@@ -32,7 +33,8 @@ const loadMermaid = () => {
   });
 };
 
-const SceneCreation = ({ onStartPlaying, onBack, onOpenApiSettings }) => {
+const SceneCreation = ({ onOpenApiSettings }) => {
+  const navigate = useNavigate();
   const { state, dispatch } = useGameState();
   const [selectedScene, setSelectedScene] = useState(null);
   const [editingScene, setEditingScene] = useState(null);
@@ -1085,7 +1087,7 @@ ${state.world.description || ''}
       dispatch({ type: 'SET_CURRENT_SCENE', payload: state.scenes[0].id });
     }
     saveToLocalStorage(state);
-    onStartPlaying();
+    navigate('/play');
   };
 
   const handleQuickSave = () => {
@@ -1146,7 +1148,7 @@ ${state.world.description || ''}
             </button>
           </div>
           <div className="nav-buttons">
-            <button className="nav-btn back" onClick={onBack}>上一步</button>
+            <button className="nav-btn back" onClick={() => navigate('/create/character')}>上一步</button>
             <button className="nav-btn back" onClick={handleQuickSave}>保存</button>
             <button className="nav-btn back" onClick={handleExport}>导出</button>
             <button className="nav-btn next" onClick={handleStartPlaying}>开始游戏</button>

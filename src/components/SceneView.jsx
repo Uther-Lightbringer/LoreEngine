@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGameState } from '../store/gameState.jsx';
 import {
   exportSave,
@@ -110,7 +111,8 @@ const ProtagonistInfo = ({ protagonist, onEdit, onRegenerate, needsRegen }) => {
 // 默认 AI 提供商
 const DEFAULT_PROVIDER = 'deepseek';
 
-const SceneView = ({ onBackToMenu }) => {
+const SceneView = () => {
+  const navigate = useNavigate();
   const { state, dispatch, saveGame } = useGameState();
   const [isAdmin, setIsAdmin] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -4036,7 +4038,7 @@ ${protagonistDesc}${capturedSection}${normalSection}
             </button>
             <button className="menu-option" onClick={() => {
               setShowMenu(false);
-              onBackToMenu();
+              navigate('/');
             }}>
               退回主桌面
             </button>

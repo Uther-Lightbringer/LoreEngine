@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { GameStateProvider, useGameState } from './store/gameState.jsx';
 import { loadFromLocalStorage, clearLocalStorageSave } from './services/saveService.js';
 import { isLoggedIn, logout, getUser } from './services/authService.js';
@@ -14,208 +15,174 @@ import ApiSettings from './components/ApiSettings.jsx';
 import StoryModeSetup from './components/StoryModeSetup.jsx';
 import './App.css';
 
+// 受保护路由：未登录重定向到 /login
+const ProtectedRoute = ({ children, adminOnly = false }) => {
+  if (!isLoggedIn()) {
+    return <Navigate to="/login" replace />;
+  }
+  if (adminOnly && !getUser()?.isAdmin) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+};
+
 const AppContent = () => {
   const { state: gameState, dispatch } = useGameState();
-  const [screen, setScreen] = useState('menu'); // menu, world, protagonist, character, scene, playing, admin, story-mode
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
-  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [loggedIn, setLoggedIn] = useState(isLoggedIn());
+  const [user, setUser] = useState(loggedIn ? getUser() : null);
   const [showApiSettings, setShowApiSettings] = useState(false);
 
-  // 检查认证状态
+  // 监听登录状态变化
   useEffect(() => {
-    const checkAuth = () => {
-      const authed = isLoggedIn();
-      setLoggedIn(authed);
-      if (authed) {
-        setUser(getUser());
-      }
-      setCheckingAuth(false);
-    };
-    checkAuth();
-  }, []);
+    const authed = isLoggedIn();
+    setLoggedIn(authed);
+    if (authed) {
+      setUser(getUser());
+    } else {
+      setUser(null);
+    }
+  }, [location.pathname]);
 
-  // 启动时检查是否有保存的游戏状态
-  useEffect(() => {
-    if (!loggedIn) return;
-
+  const handleLoginSuccess = () => {
+    setLoggedIn(true);
+    setUser(getUser());
+    // 登录后检查是否有存档
     const savedGame = loadFromLocalStorage();
     if (savedGame && savedGame.world && savedGame.world.name) {
       dispatch({ type: 'SET_STATE', payload: savedGame });
-      setScreen('playing');
+      navigate('/play', { replace: true });
+    } else {
+      navigate('/', { replace: true });
     }
-  }, [loggedIn, dispatch]);
-
-  const handleLoginSuccess = () => {
-    clearLocalStorageSave(); // 清除旧的游戏状态
-    setLoggedIn(true);
-    setUser(getUser());
   };
 
   const handleLogout = () => {
     logout();
-    clearLocalStorageSave(); // 清除游戏状态
+    clearLocalStorageSave();
     setLoggedIn(false);
     setUser(null);
-    setScreen('menu');
+    navigate('/login', { replace: true });
   };
 
-  const handleStartGame = (mode) => {
-    if (mode === 'story') {
-      setScreen('story-mode');
-    } else {
-      setScreen('world');
-    }
-  };
-
-  const handleContinueGame = () => {
-    setScreen('playing');
-  };
-
-  const handleBackToMenu = () => {
-    setScreen('menu');
-  };
-
-  const handleNextFromWorld = () => {
-    setScreen('protagonist');
-  };
-
-  const handleBackFromWorld = () => {
-    setScreen('menu');
-  };
-
-  const handleNextFromProtagonist = () => {
-    setScreen('character');
-  };
-
-  const handleBackFromProtagonist = () => {
-    setScreen('world');
-  };
-
-  const handleNextFromCharacter = () => {
-    setScreen('scene');
-  };
-
-  const handleBackFromCharacter = () => {
-    setScreen('protagonist');
-  };
-
-  const handleStartPlaying = () => {
-    setScreen('playing');
-  };
-
-  const handleBackFromScene = () => {
-    setScreen('character');
-  };
-
-  const handleOpenAdmin = () => {
-    setScreen('admin');
-  };
-
-  const handleBackFromAdmin = () => {
-    setScreen('menu');
-  };
-
-  const handleNextFromStoryMode = () => {
-    // StoryModeSetup 已经设置好了世界、主角、角色和场景
-    // 直接进入游戏
-    setScreen('playing');
-  };
-
-  const handleBackFromStoryMode = () => {
-    setScreen('menu');
-  };
-
-  // 加载中状态
-  if (checkingAuth) {
-    return (
-      <div className="loading-container">
-        <p>加载中...</p>
-      </div>
-    );
-  }
-
-  // 未登录状态
-  if (!loggedIn) {
-    return <Login onLoginSuccess={handleLoginSuccess} />;
-  }
+  const openApiSettings = () => setShowApiSettings(true);
 
   return (
     <div className="app">
-      {/* 顶部栏 */}
-      <div className="top-bar">
-        <span className="user-info">
-          欢迎, {user?.username}
-          {user?.isAdmin && <span className="admin-badge">管理员</span>}
-        </span>
-        <div className="top-bar-actions">
-          {user?.isAdmin && screen === 'menu' && (
-            <button className="top-bar-btn" onClick={handleOpenAdmin}>
-              用户管理
+      {/* 顶部栏 — 仅在已登录时显示 */}
+      {loggedIn && (
+        <div className="top-bar">
+          <span className="user-info">
+            欢迎, {user?.username}
+            {user?.isAdmin && <span className="admin-badge">管理员</span>}
+          </span>
+          <div className="top-bar-actions">
+            {user?.isAdmin && location.pathname === '/' && (
+              <button className="top-bar-btn" onClick={() => navigate('/admin')}>
+                用户管理
+              </button>
+            )}
+            {user?.isAdmin && location.pathname === '/' && (
+              <button className="top-bar-btn" onClick={openApiSettings}>
+                API设置
+              </button>
+            )}
+            <button className="top-bar-btn" onClick={handleLogout}>
+              登出
             </button>
-          )}
-          {user?.isAdmin && screen === 'menu' && (
-            <button className="top-bar-btn" onClick={() => setShowApiSettings(true)}>
-              API设置
-            </button>
-          )}
-          <button className="top-bar-btn" onClick={handleLogout}>
-            登出
-          </button>
+          </div>
         </div>
-      </div>
+      )}
 
-      {screen === 'menu' && (
-        <MainMenu
-          onStartGame={handleStartGame}
-          onContinueGame={handleContinueGame}
+      <Routes>
+        {/* 登录页 */}
+        <Route
+          path="/login"
+          element={
+            loggedIn ? <Navigate to="/" replace /> : <Login onLoginSuccess={handleLoginSuccess} />
+          }
         />
-      )}
-      {screen === 'world' && (
-        <WorldCreation
-          onNext={handleNextFromWorld}
-          onBack={handleBackFromWorld}
-          onOpenApiSettings={() => setShowApiSettings(true)}
+
+        {/* 主菜单 */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <MainMenu />
+            </ProtectedRoute>
+          }
         />
-      )}
-      {screen === 'protagonist' && (
-        <ProtagonistCreation
-          onNext={handleNextFromProtagonist}
-          onBack={handleBackFromProtagonist}
-          onOpenApiSettings={() => setShowApiSettings(true)}
+
+        {/* 创建流程 */}
+        <Route
+          path="/create/world"
+          element={
+            <ProtectedRoute>
+              <WorldCreation onOpenApiSettings={openApiSettings} />
+            </ProtectedRoute>
+          }
         />
-      )}
-      {screen === 'character' && (
-        <CharacterCreation
-          onNext={handleNextFromCharacter}
-          onBack={handleBackFromCharacter}
-          onOpenApiSettings={() => setShowApiSettings(true)}
+        <Route
+          path="/create/protagonist"
+          element={
+            <ProtectedRoute>
+              <ProtagonistCreation onOpenApiSettings={openApiSettings} />
+            </ProtectedRoute>
+          }
         />
-      )}
-      {screen === 'scene' && (
-        <SceneCreation
-          onStartPlaying={handleStartPlaying}
-          onBack={handleBackFromScene}
-          onOpenApiSettings={() => setShowApiSettings(true)}
+        <Route
+          path="/create/character"
+          element={
+            <ProtectedRoute>
+              <CharacterCreation onOpenApiSettings={openApiSettings} />
+            </ProtectedRoute>
+          }
         />
-      )}
-      {screen === 'playing' && (
-        <SceneView
-          onBackToMenu={handleBackToMenu}
+        <Route
+          path="/create/scene"
+          element={
+            <ProtectedRoute>
+              <SceneCreation onOpenApiSettings={openApiSettings} />
+            </ProtectedRoute>
+          }
         />
-      )}
-      {screen === 'story-mode' && (
-        <StoryModeSetup
-          onNext={handleNextFromStoryMode}
-          onBack={handleBackFromStoryMode}
-          onOpenApiSettings={() => setShowApiSettings(true)}
+
+        {/* 游戏中 */}
+        <Route
+          path="/play"
+          element={
+            <ProtectedRoute>
+              <SceneView />
+            </ProtectedRoute>
+          }
         />
-      )}
-      {screen === 'admin' && (
-        <UserManagement
-          onBack={handleBackFromAdmin}
+
+        {/* 剧情模式 */}
+        <Route
+          path="/story"
+          element={
+            <ProtectedRoute>
+              <StoryModeSetup onOpenApiSettings={openApiSettings} />
+            </ProtectedRoute>
+          }
         />
-      )}
+
+        {/* 管理员 */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute adminOnly>
+              <UserManagement />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 未匹配路由重定向到首页 */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+
+      {/* API 设置弹窗 */}
       {showApiSettings && (
         <ApiSettings onClose={() => setShowApiSettings(false)} />
       )}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGameState } from '../store/gameState.jsx';
 import { generateWithAI, MAX_TOKENS } from '../services/aiService.js';
 import { generateImage } from '../services/imageService.js';
@@ -8,7 +9,8 @@ import ImageModal from './ImageModal.jsx';
 import './CharacterCreation.css';
 import './WorldCreation.css';
 
-const CharacterCreation = ({ onNext, onBack, onOpenApiSettings }) => {
+const CharacterCreation = ({ onOpenApiSettings }) => {
+  const navigate = useNavigate();
   const { state, dispatch } = useGameState();
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [editingCharacter, setEditingCharacter] = useState(null);
@@ -1075,7 +1077,7 @@ ${state.world.description || ''}
             <span className="step-number">1</span>
             <span>世界观</span>
           </div>
-          <div className="step" onClick={onBack} style={{ cursor: 'pointer' }}>
+          <div className="step" onClick={() => navigate('/create/protagonist')} style={{ cursor: 'pointer' }}>
             <span className="step-number">2</span>
             <span>主角设定</span>
           </div>
@@ -1092,8 +1094,8 @@ ${state.world.description || ''}
         <div className="creation-header">
           <h2>创建其他角色</h2>
           <div className="nav-buttons">
-            <button className="nav-btn back" onClick={onBack}>上一步</button>
-            <button className="nav-btn next" onClick={onNext}>下一步: 场景</button>
+            <button className="nav-btn back" onClick={() => navigate('/create/protagonist')}>上一步</button>
+            <button className="nav-btn next" onClick={() => navigate('/create/scene')}>下一步: 场景</button>
           </div>
         </div>
 

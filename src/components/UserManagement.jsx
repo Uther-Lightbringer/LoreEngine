@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getToken } from '../services/authService.js';
 import './UserManagement.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:29999/api';
 
-const UserManagement = ({ onBack }) => {
+const UserManagement = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -126,7 +128,7 @@ const UserManagement = ({ onBack }) => {
     <div className="user-management">
       <div className="header">
         <h2>用户管理</h2>
-        <button className="back-btn" onClick={onBack}>返回</button>
+        <button className="back-btn" onClick={() => navigate('/')}>返回</button>
       </div>
 
       {error && <p className="error">{error}</p>}

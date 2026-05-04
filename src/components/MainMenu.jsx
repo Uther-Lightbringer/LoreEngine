@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { importSave, loadFromLocalStorage, clearLocalStorageSave } from '../services/saveService.js';
 import { useGameState } from '../store/gameState.jsx';
 import DatabaseManager from './DatabaseManager.jsx';
 import './MainMenu.css';
 
-const MainMenu = ({ onStartGame, onContinueGame }) => {
+const MainMenu = () => {
+  const navigate = useNavigate();
   const { dispatch } = useGameState();
   const [loadError, setLoadError] = useState('');
   const [showDatabase, setShowDatabase] = useState(false);
@@ -15,7 +17,7 @@ const MainMenu = ({ onStartGame, onContinueGame }) => {
     dispatch({ type: 'RESET_STATE' });
     dispatch({ type: 'SET_GAME_MODE', payload: mode });
     setShowGameModeModal(false);
-    onStartGame(mode);
+    navigate(mode === 'story' ? '/story' : '/create/world');
   };
 
   const handleFileUpload = async (e) => {
@@ -26,7 +28,7 @@ const MainMenu = ({ onStartGame, onContinueGame }) => {
       const saveData = await importSave(file);
       dispatch({ type: 'SET_STATE', payload: saveData });
       setLoadError('');
-      onContinueGame();
+      navigate('/play');
     } catch (error) {
       setLoadError(error.message);
     }
@@ -38,7 +40,7 @@ const MainMenu = ({ onStartGame, onContinueGame }) => {
     const saveData = loadFromLocalStorage();
     if (saveData) {
       dispatch({ type: 'SET_STATE', payload: saveData });
-      onContinueGame();
+      navigate('/play');
     } else {
       setLoadError('没有找到本地存档');
     }
@@ -46,7 +48,7 @@ const MainMenu = ({ onStartGame, onContinueGame }) => {
 
   const handleLoadSaveFromDB = (gameState) => {
     dispatch({ type: 'SET_STATE', payload: gameState });
-    onContinueGame();
+    navigate('/play');
   };
 
   return (

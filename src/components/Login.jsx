@@ -23,6 +23,8 @@ const Login = ({ onLoginSuccess }) => {
     }
   };
 
+  // Login keeps onLoginSuccess prop since auth state is managed in App.jsx
+
   return (
     <div className="login-container">
       <div className="login-box">

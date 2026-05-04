@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGameState } from '../store/gameState.jsx';
 import { generateWithAI, MAX_TOKENS } from '../services/aiService.js';
 import { getNovels, deleteNovel, getNarrativeSnapshots } from '../services/novelService.js';
@@ -31,7 +32,8 @@ const extractData = (result, fallback = {}) => {
   return fallback;
 };
 
-const StoryModeSetup = ({ onNext, onBack, onOpenApiSettings }) => {
+const StoryModeSetup = ({ onOpenApiSettings }) => {
+  const navigate = useNavigate();
   const { dispatch, state } = useGameState();
   const [storyPrompt, setStoryPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -324,7 +326,7 @@ const StoryModeSetup = ({ onNext, onBack, onOpenApiSettings }) => {
       }
 
       // 进入游戏
-      onNext();
+      navigate('/play');
     } catch (err) {
       console.error('生成剧情失败:', err);
       setError(`生成失败: ${err.message}`);
@@ -538,7 +540,7 @@ const StoryModeSetup = ({ onNext, onBack, onOpenApiSettings }) => {
       </div>
 
       <div className="setup-footer">
-        <button className="back-btn" onClick={onBack}>
+        <button className="back-btn" onClick={() => navigate('/')}>
           返回
         </button>
       </div>

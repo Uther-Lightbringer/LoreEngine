@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGameState } from '../store/gameState.jsx';
 import { generateWithAI, MAX_TOKENS } from '../services/aiService.js';
 import { generateImage } from '../services/imageService.js';
@@ -6,7 +7,8 @@ import { saveWorldToDatabase, setCurrentWorldId } from '../services/saveService.
 import ImageModal from './ImageModal.jsx';
 import './WorldCreation.css';
 
-const WorldCreation = ({ onNext, onBack, onOpenApiSettings }) => {
+const WorldCreation = ({ onOpenApiSettings }) => {
+  const navigate = useNavigate();
   const { state, dispatch } = useGameState();
   const [world, setWorld] = useState(state.world);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -142,7 +144,7 @@ const WorldCreation = ({ onNext, onBack, onOpenApiSettings }) => {
     } else {
       dispatch({ type: 'UPDATE_WORLD', payload: world });
     }
-    onNext();
+    navigate('/create/protagonist');
   };
 
   return (
@@ -170,7 +172,7 @@ const WorldCreation = ({ onNext, onBack, onOpenApiSettings }) => {
         <div className="creation-header">
           <h2>创建世界观</h2>
           <div className="nav-buttons">
-            <button className="nav-btn back" onClick={onBack}>返回</button>
+            <button className="nav-btn back" onClick={() => navigate('/')}>返回</button>
             <button className="nav-btn next" onClick={handleNext}>下一步: 主角设定</button>
           </div>
         </div>
