@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGameState } from '../store/gameState.jsx';
 import { generateWithAI, MAX_TOKENS } from '../services/aiService.js';
 import { generateImage } from '../services/imageService.js';
+import { saveDraftProgress } from '../services/saveService.js';
 import { batchGenerateCharacters, expandCharacter } from '../services/apiService.js';
 import { defaultCharacter } from '../data/templates.js';
 import ImageModal from './ImageModal.jsx';
@@ -1095,7 +1096,11 @@ ${state.world.description || ''}
           <h2>创建其他角色</h2>
           <div className="nav-buttons">
             <button className="nav-btn back" onClick={() => navigate('/create/protagonist')}>上一步</button>
-            <button className="nav-btn next" onClick={() => navigate('/create/scene')}>下一步: 场景</button>
+            <button className="nav-btn next" onClick={async () => {
+              dispatch({ type: 'SET_CREATION_STEP', payload: 'scene' });
+              await saveDraftProgress(state);
+              navigate('/create/scene');
+            }}>下一步: 场景</button>
           </div>
         </div>
 

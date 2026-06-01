@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGameState } from '../store/gameState.jsx';
 import { generateWithAI, MAX_TOKENS } from '../services/aiService.js';
 import { generateImage } from '../services/imageService.js';
+import { saveDraftProgress, promoteDraftToSave } from '../services/saveService.js';
 import { sampleScenePrompt, defaultScene } from '../data/templates.js';
 import { exportSave, saveToLocalStorage } from '../services/saveService.js';
 import { batchGenerateScenes, generateWorldMap, generateScenesFromMap } from '../services/apiService.js';
@@ -1078,7 +1079,7 @@ ${state.world.description || ''}
     }
   };
 
-  const handleStartPlaying = () => {
+  const handleStartPlaying = async () => {
     if (state.scenes.length === 0) {
       setError('请至少创建一个场景');
       return;
@@ -1086,6 +1087,17 @@ ${state.world.description || ''}
     if (!state.currentSceneId) {
       dispatch({ type: 'SET_CURRENT_SCENE', payload: state.scenes[0].id });
     }
+
+    // 保存草稿进度
+    await saveDraftProgress(state);
+
+    // 将草稿升级为正式存档
+    if (state.draftSaveId) {
+      await promoteDraftToSave(state.draftSaveId, state);
+    }
+
+    dispatch({ type: 'SET_CREATION_STEP', payload: null });
+
     saveToLocalStorage(state);
     navigate('/play');
   };

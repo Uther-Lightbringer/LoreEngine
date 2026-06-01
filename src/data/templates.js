@@ -137,7 +137,12 @@ export const initialGameState = {
     dayOfWeek: 5 // 2017年9月1日是周五，1=周一，7=周日
   },
   createdAt: null,
-  updatedAt: null
+  updatedAt: null,
+  // 草稿创建进度
+  isDraft: false,
+  creationStep: null, // 'world' | 'protagonist' | 'character' | 'scene' | null
+  draftSaveId: null,  // 后端 saves 表中的草稿 ID
+  draftWorldId: null  // 后端 worlds 表中的占位世界观 ID
 };
 
 export const sampleWorldPrompt = `生成一个奇幻世界观设定，包含：

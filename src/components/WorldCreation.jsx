@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGameState } from '../store/gameState.jsx';
 import { generateWithAI, MAX_TOKENS } from '../services/aiService.js';
 import { generateImage } from '../services/imageService.js';
-import { saveWorldToDatabase, setCurrentWorldId } from '../services/saveService.js';
+import { saveWorldToDatabase, setCurrentWorldId, saveDraftProgress } from '../services/saveService.js';
 import ImageModal from './ImageModal.jsx';
 import './WorldCreation.css';
 
@@ -129,13 +129,18 @@ const WorldCreation = ({ onOpenApiSettings }) => {
     // 自动保存世界观到数据库
     if (world.name) {
       try {
-        const worldId = await saveWorldToDatabase(world);
-        if (worldId) {
-          setCurrentWorldId(worldId);
-          // 更新 state.world.id 为数据库返回的 ID
-          dispatch({ type: 'UPDATE_WORLD', payload: { ...world, id: worldId } });
-        } else {
+        // 如果是草稿且已有 draftWorldId，用 PUT 按 ID 更新
+        if (state.draftWorldId) {
           dispatch({ type: 'UPDATE_WORLD', payload: world });
+          await saveDraftProgress({ ...state, world: { ...world, id: state.draftWorldId }, creationStep: 'protagonist', isDraft: true });
+        } else {
+          const worldId = await saveWorldToDatabase(world);
+          if (worldId) {
+            setCurrentWorldId(worldId);
+            dispatch({ type: 'UPDATE_WORLD', payload: { ...world, id: worldId } });
+          } else {
+            dispatch({ type: 'UPDATE_WORLD', payload: world });
+          }
         }
       } catch (error) {
         console.error('Failed to save world to database:', error);
@@ -144,6 +149,12 @@ const WorldCreation = ({ onOpenApiSettings }) => {
     } else {
       dispatch({ type: 'UPDATE_WORLD', payload: world });
     }
+
+    dispatch({ type: 'SET_CREATION_STEP', payload: 'protagonist' });
+
+    // 保存草稿进度
+    await saveDraftProgress(state);
+
     navigate('/create/protagonist');
   };
 

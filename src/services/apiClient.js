@@ -60,6 +60,12 @@ const worldsApi = {
     body: JSON.stringify(world),
   }),
 
+  // 按ID更新世界观（不走 Upsert by name）
+  update: async (id, data) => request(`/worlds/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+
   // 删除世界观
   delete: async (id) => request(`/worlds/${id}`, {
     method: 'DELETE',
@@ -70,6 +76,9 @@ const worldsApi = {
 const savesApi = {
   // 获取所有存档
   getAll: async () => request('/saves'),
+
+  // 获取当前用户的草稿列表
+  getDrafts: async () => request('/saves/drafts'),
 
   // 根据ID获取存档
   getById: async (id) => request(`/saves/${id}`),
@@ -87,6 +96,12 @@ const savesApi = {
   update: async (id, gameState) => request(`/saves/${id}`, {
     method: 'PUT',
     body: JSON.stringify({ game_state: gameState }),
+  }),
+
+  // 更新存档（同时更新 save_type）
+  updateWithSaveType: async (id, gameState, saveType) => request(`/saves/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ game_state: gameState, save_type: saveType }),
   }),
 
   // 删除存档

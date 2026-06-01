@@ -196,12 +196,20 @@ const initTables = () => {
     // 列可能已存在，忽略错误
   }
 
+  // 如果 save_type 列不存在，添加它（兼容旧数据库）
+  try {
+    db.exec("ALTER TABLE saves ADD COLUMN save_type TEXT NOT NULL DEFAULT 'save'");
+  } catch (e) {
+    // 列可能已存在，忽略错误
+  }
+
   // 创建索引
   db.exec('CREATE INDEX IF NOT EXISTS idx_worlds_user_id ON worlds (user_id)');
   db.exec('CREATE INDEX IF NOT EXISTS idx_worlds_updated_at ON worlds (updated_at DESC)');
   db.exec('CREATE INDEX IF NOT EXISTS idx_saves_user_id ON saves (user_id)');
   db.exec('CREATE INDEX IF NOT EXISTS idx_saves_world_id ON saves (world_id)');
   db.exec('CREATE INDEX IF NOT EXISTS idx_saves_updated_at ON saves (updated_at DESC)');
+  db.exec('CREATE INDEX IF NOT EXISTS idx_saves_save_type ON saves (save_type, user_id)');
   db.exec('CREATE INDEX IF NOT EXISTS idx_timestamps_user_id ON timestamps (user_id)');
   db.exec('CREATE INDEX IF NOT EXISTS idx_timestamps_world_id ON timestamps (world_id)');
   db.exec('CREATE INDEX IF NOT EXISTS idx_timestamps_save_id ON timestamps (save_id)');

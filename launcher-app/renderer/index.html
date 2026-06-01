@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoreEngine Launcher</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* ===== Title Bar ===== */
+    .titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      height: 40px;
+      background: #0f172a;
+      -webkit-app-region: drag;
+      border-bottom: 1px solid #1e293b;
+      flex-shrink: 0;
+    }
+
+    .titlebar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .titlebar-logo {
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      border-radius: 4px;
+    }
+
+    .titlebar-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #94a3b8;
+      letter-spacing: 0.5px;
+    }
+
+    .titlebar-btns {
+      display: flex;
+      gap: 8px;
+      -webkit-app-region: no-drag;
+    }
+
+    .titlebar-btn {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .titlebar-btn:hover { opacity: 0.8; }
+    .btn-minimize { background: #facc15; }
+    .btn-close { background: #ef4444; }
+
+    /* ===== Setup Screen ===== */
+    .setup-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 40px;
+    }
+
+    .setup-icon {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+
+    .setup-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .setup-desc {
+      font-size: 14px;
+      color: #64748b;
+      text-align: center;
+      max-width: 400px;
+      line-height: 1.6;
+    }
+
+    .setup-path {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: #94a3b8;
+      font-size: 13px;
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      word-break: break-all;
+    }
+
+    .setup-btn {
+      padding: 10px 28px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .setup-btn-primary {
+      background: #6366f1;
+      color: white;
+    }
+    .setup-btn-primary:hover { background: #818cf8; }
+
+    .setup-btn-ghost {
+      background: transparent;
+      color: #94a3b8;
+      border: 1px solid #334155;
+    }
+    .setup-btn-ghost:hover { background: #1e293b; border-color: #475569; }
+
+    .setup-error {
+      color: #ef4444;
+      font-size: 13px;
+      min-height: 20px;
+    }
+
+    /* ===== Main Content ===== */
+    .content {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      padding: 16px;
+      gap: 12px;
+      overflow: hidden;
+    }
+    .content.visible { display: flex; }
+
+    /* ===== Project Bar ===== */
+    .project-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #1e293b;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    .project-bar-label {
+      font-size: 11px;
+      color: #64748b;
+      flex-shrink: 0;
+    }
+
+    .project-bar-path {
+      font-size: 12px;
+      color: #94a3b8;
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .project-bar-btn {
+      padding: 3px 10px;
+      border-radius: 4px;
+      border: 1px solid #334155;
+      background: transparent;
+      color: #64748b;
+      font-size: 11px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .project-bar-btn:hover { color: #94a3b8; border-color: #475569; }
+
+    /* ===== Status Bar ===== */
+    .status-bar {
+      display: flex;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .status-card {
+      flex: 1;
+      background: #1e293b;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .status-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #475569;
+      transition: background 0.3s;
+    }
+    .status-dot.running {
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+    }
+
+    .status-label {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .status-sub {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    .status-btn {
+      padding: 6px 16px;
+      border-radius: 6px;
+      border: none;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-start {
+      background: #6366f1;
+      color: white;
+    }
+    .btn-start:hover { background: #818cf8; }
+    .btn-start:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+
+    .btn-stop {
+      background: #dc2626;
+      color: white;
+    }
+    .btn-stop:hover { background: #ef4444; }
+
+    /* ===== Logs ===== */
+    .logs-container {
+      flex: 1;
+      display: flex;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    .log-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #1e293b;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .log-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid #334155;
+      flex-shrink: 0;
+    }
+
+    .log-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .log-icon {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+    }
+    .log-icon.fe { background: #06b6d4; }
+    .log-icon.be { background: #22c55e; }
+
+    .log-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+
+    .log-clear {
+      background: none;
+      border: none;
+      color: #475569;
+      font-size: 11px;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .log-clear:hover { color: #94a3b8; background: #334155; }
+
+    .log-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 12px;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 11.5px;
+      line-height: 1.6;
+    }
+
+    .log-body::-webkit-scrollbar { width: 6px; }
+    .log-body::-webkit-scrollbar-track { background: transparent; }
+    .log-body::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+    .log-line {
+      white-space: pre-wrap;
+      word-break: break-all;
+      padding: 1px 0;
+    }
+    .log-line.stdout { color: #cbd5e1; }
+    .log-line.stderr { color: #fbbf24; }
+    .log-line.error { color: #ef4444; }
+    .log-line.info { color: #60a5fa; }
+    .log-line.time { color: #475569; margin-right: 6px; }
+
+    /* ===== Footer ===== */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      border-top: 1px solid #1e293b;
+      flex-shrink: 0;
+    }
+
+    .footer-left {
+      font-size: 11px;
+      color: #475569;
+    }
+
+    .footer-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .footer-btn {
+      padding: 5px 14px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .footer-btn:hover { background: #1e293b; border-color: #475569; }
+
+    .footer-btn.primary {
+      background: #6366f1;
+      border-color: #6366f1;
+      color: white;
+    }
+    .footer-btn.primary:hover { background: #818cf8; }
+    .footer-btn.primary:disabled { background: #334155; border-color: #334155; color: #64748b; cursor: not-allowed; }
+
+    .footer-btn.danger {
+      border-color: #dc2626;
+      color: #dc2626;
+    }
+    .footer-btn.danger:hover { background: #dc2626; color: white; }
+  </style>
+</head>
+<body>
+  <!-- Title Bar -->
+  <div class="titlebar">
+    <div class="titlebar-left">
+      <div class="titlebar-logo"></div>
+      <span class="titlebar-title">LoreEngine Launcher</span>
+    </div>
+    <div class="titlebar-btns">
+      <button class="titlebar-btn btn-minimize" onclick="launcher.minimize()"></button>
+      <button class="titlebar-btn btn-close" onclick="launcher.close()"></button>
+    </div>
+  </div>
+
+  <!-- Setup Screen -->
+  <div class="setup-screen" id="setup-screen">
+    <div class="setup-icon">🎮</div>
+    <div class="setup-title">欢迎使用 LoreEngine Launcher</div>
+    <div class="setup-desc">首次使用，请选择 LoreEngine 项目所在的目录。<br>启动器将自动保存路径，下次无需重复选择。</div>
+    <div class="setup-path" id="setup-path">未选择项目目录</div>
+    <div class="setup-error" id="setup-error"></div>
+    <button class="setup-btn setup-btn-primary" onclick="selectProject()">选择项目目录</button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content" id="main-content">
+    <!-- Project Path Bar -->
+    <div class="project-bar">
+      <span class="project-bar-label">项目路径:</span>
+      <span class="project-bar-path" id="project-path"></span>
+      <button class="project-bar-btn" onclick="selectProject()">更换</button>
+    </div>
+
+    <!-- Status Cards -->
+    <div class="status-bar">
+      <div class="status-card">
+        <div class="status-info">
+          <div class="status-dot" id="fe-dot"></div>
+          <div>
+            <div class="status-label">前端 (Vite)</div>
+            <div class="status-sub" id="fe-sub">localhost:3000</div>
+          </div>
+        </div>
+        <button class="status-btn btn-start" id="fe-btn" onclick="toggleFrontend()">启动</button>
+      </div>
+      <div class="status-card">
+        <div class="status-info">
+          <div class="status-dot" id="be-dot"></div>
+          <div>
+            <div class="status-label">后端 (Express)</div>
+            <div class="status-sub" id="be-sub">localhost:29999</div>
+          </div>
+        </div>
+        <button class="status-btn btn-start" id="be-btn" onclick="toggleBackend()">启动</button>
+      </div>
+    </div>
+
+    <!-- Log Panels -->
+    <div class="logs-container">
+      <div class="log-panel">
+        <div class="log-header">
+          <div class="log-header-left">
+            <div class="log-icon fe"></div>
+            <span class="log-title">前端日志</span>
+          </div>
+          <button class="log-clear" onclick="clearLog('frontend')">清空</button>
+        </div>
+        <div class="log-body" id="fe-log"></div>
+      </div>
+      <div class="log-panel">
+        <div class="log-header">
+          <div class="log-header-left">
+            <div class="log-icon be"></div>
+            <span class="log-title">后端日志</span>
+          </div>
+          <button class="log-clear" onclick="clearLog('backend')">清空</button>
+        </div>
+        <div class="log-body" id="be-log"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-left" id="footer-status">就绪</div>
+    <div class="footer-btns">
+      <button class="footer-btn primary" id="start-all-btn" onclick="startAll()">全部启动</button>
+      <button class="footer-btn danger" id="stop-all-btn" onclick="stopAll()" style="display:none">全部停止</button>
+    </div>
+  </div>
+
+  <script>
+    const feLog = document.getElementById('fe-log');
+    const beLog = document.getElementById('be-log');
+    const feDot = document.getElementById('fe-dot');
+    const beDot = document.getElementById('be-dot');
+    const feBtn = document.getElementById('fe-btn');
+    const beBtn = document.getElementById('be-btn');
+    const feSub = document.getElementById('fe-sub');
+    const beSub = document.getElementById('be-sub');
+    const footerStatus = document.getElementById('footer-status');
+    const startAllBtn = document.getElementById('start-all-btn');
+    const stopAllBtn = document.getElementById('stop-all-btn');
+    const setupScreen = document.getElementById('setup-screen');
+    const mainContent = document.getElementById('main-content');
+    const setupPath = document.getElementById('setup-path');
+    const setupError = document.getElementById('setup-error');
+    const projectPathEl = document.getElementById('project-path');
+
+    let feRunning = false;
+    let beRunning = false;
+    let projectReady = false;
+
+    function timeStr() {
+      return new Date().toLocaleTimeString('zh-CN', { hour12: false });
+    }
+
+    function appendLog(panel, text, type) {
+      const div = document.createElement('div');
+      div.className = `log-line ${type}`;
+      const ts = document.createElement('span');
+      ts.className = 'log-line time';
+      ts.textContent = timeStr();
+      div.appendChild(ts);
+      div.appendChild(document.createTextNode(text));
+      panel.appendChild(div);
+      panel.scrollTop = panel.scrollHeight;
+    }
+
+    function clearLog(which) {
+      if (which === 'frontend') feLog.innerHTML = '';
+      else beLog.innerHTML = '';
+    }
+
+    function updateUI() {
+      feDot.className = `status-dot ${feRunning ? 'running' : ''}`;
+      beDot.className = `status-dot ${beRunning ? 'running' : ''}`;
+
+      feBtn.textContent = feRunning ? '停止' : '启动';
+      feBtn.className = `status-btn ${feRunning ? 'btn-stop' : 'btn-start'}`;
+      beBtn.textContent = beRunning ? '停止' : '启动';
+      beBtn.className = `status-btn ${beRunning ? 'btn-stop' : 'btn-start'}`;
+
+      feSub.textContent = feRunning ? '运行中...' : 'localhost:3000';
+      beSub.textContent = beRunning ? '运行中...' : 'localhost:29999';
+
+      const anyRunning = feRunning || beRunning;
+      startAllBtn.style.display = anyRunning ? 'none' : '';
+      stopAllBtn.style.display = anyRunning ? '' : 'none';
+
+      footerStatus.textContent = anyRunning ? '服务运行中' : '就绪';
+    }
+
+    function showMain(path) {
+      projectReady = true;
+      setupScreen.style.display = 'none';
+      mainContent.classList.add('visible');
+      projectPathEl.textContent = path;
+    }
+
+    function showSetup() {
+      projectReady = false;
+      setupScreen.style.display = '';
+      mainContent.classList.remove('visible');
+    }
+
+    async function selectProject() {
+      const result = await launcher.selectProject();
+      if (result.canceled) return;
+      if (result.error) {
+        setupError.textContent = result.message;
+        return;
+      }
+      setupError.textContent = '';
+      showMain(result.path);
+    }
+
+    async function toggleFrontend() {
+      if (feRunning) {
+        await launcher.stopFrontend();
+      } else {
+        feBtn.disabled = true;
+        footerStatus.textContent = '正在启动前端...';
+        appendLog(feLog, '正在启动 Vite 开发服务器...', 'info');
+        await launcher.startFrontend();
+      }
+    }
+
+    async function toggleBackend() {
+      if (beRunning) {
+        await launcher.stopBackend();
+      } else {
+        beBtn.disabled = true;
+        footerStatus.textContent = '正在启动后端...';
+        appendLog(beLog, '正在启动 Express 服务器...', 'info');
+        await launcher.startBackend();
+      }
+    }
+
+    async function startAll() {
+      startAllBtn.disabled = true;
+      footerStatus.textContent = '正在检查环境...';
+
+      const envResult = await launcher.checkEnv();
+      if (envResult.status === 'no_project') {
+        showSetup();
+        startAllBtn.disabled = false;
+        return;
+      }
+      if (envResult.status === 'error') {
+        appendLog(beLog, envResult.message, 'error');
+        startAllBtn.disabled = false;
+        return;
+      }
+      if (envResult.status === 'created') {
+        appendLog(beLog, envResult.message, 'info');
+      }
+
+      footerStatus.textContent = '正在检查依赖...';
+      const depResult = await launcher.checkDeps();
+      if (!depResult.frontend) appendLog(feLog, '前端依赖安装失败', 'error');
+      if (!depResult.backend) appendLog(beLog, '后端依赖安装失败', 'error');
+
+      footerStatus.textContent = '正在启动服务...';
+      appendLog(feLog, '正在启动 Vite 开发服务器...', 'info');
+      appendLog(beLog, '正在启动 Express 服务器...', 'info');
+
+      await launcher.startBackend();
+      await launcher.startFrontend();
+
+      startAllBtn.disabled = false;
+    }
+
+    async function stopAll() {
+      footerStatus.textContent = '正在停止服务...';
+      await launcher.stopFrontend();
+      await launcher.stopBackend();
+    }
+
+    // --- 监听日志 ---
+    launcher.onLog(({ source, text, type }) => {
+      if (source === 'frontend') appendLog(feLog, text, type);
+      else appendLog(beLog, text, type);
+    });
+
+    // --- 监听进程退出 ---
+    launcher.onProcessExit(({ name, code }) => {
+      if (name === 'frontend') {
+        feRunning = false;
+        feBtn.disabled = false;
+        appendLog(feLog, `进程已退出 (code=${code})`, code === 0 ? 'info' : 'error');
+      } else {
+        beRunning = false;
+        beBtn.disabled = false;
+        appendLog(beLog, `进程已退出 (code=${code})`, code === 0 ? 'info' : 'error');
+      }
+      updateUI();
+    });
+
+    // --- 轮询状态 ---
+    setInterval(async () => {
+      const status = await launcher.getStatus();
+      const newFe = status.frontend === 'running';
+      const newBe = status.backend === 'running';
+
+      if (newFe !== feRunning) {
+        feRunning = newFe;
+        if (feRunning) appendLog(feLog, '前端服务已启动 ✓', 'info');
+      }
+      if (newBe !== beRunning) {
+        beRunning = newBe;
+        if (beRunning) appendLog(beLog, '后端服务已启动 ✓', 'info');
+      }
+      updateUI();
+    }, 500);
+
+    // --- 初始化 ---
+    (async () => {
+      const path = await launcher.getProjectPath();
+      if (path) {
+        showMain(path);
+      } else {
+        showSetup();
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -178,3 +178,91 @@
   background: #3d4758;
   color: #fff;
 }
+
+/* 草稿恢复区域 */
+.draft-resume-section {
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.draft-section-title {
+  color: #aaa;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  text-align: center;
+  font-weight: normal;
+}
+
+.draft-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #2d3748;
+  border-radius: 10px;
+  background: rgba(45, 55, 72, 0.3);
+  transition: all 0.3s ease;
+}
+
+.draft-card:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.draft-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.draft-world-name {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+
+.draft-step {
+  color: #667eea;
+  font-size: 0.8rem;
+}
+
+.draft-time {
+  color: #666;
+  font-size: 0.75rem;
+}
+
+.draft-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.draft-btn {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.draft-btn.resume {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+}
+
+.draft-btn.resume:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+}
+
+.draft-btn.delete {
+  background: rgba(45, 55, 72, 0.6);
+  color: #888;
+}
+
+.draft-btn.delete:hover {
+  background: rgba(233, 69, 96, 0.3);
+  color: #e94560;
+}

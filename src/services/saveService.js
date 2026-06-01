@@ -584,3 +584,108 @@ export const getAllWorlds = async () => {
   }
 };
 
+// ===== 草稿创建进度功能 =====
+
+// 创建草稿存档（handleNewGame 时调用一次）
+export const createDraftSave = async (gameState) => {
+  try {
+    const available = await checkBackend();
+    if (!available) return null;
+
+    // 1. 创建占位世界观
+    const draftWorldName = `draft_${Date.now()}`;
+    const savedWorld = await worldsApi.save({
+      name: draftWorldName,
+      description: '',
+      image_url: ''
+    });
+    const worldId = savedWorld.id || savedWorld;
+    setCurrentWorldId(worldId);
+
+    // 2. 创建草稿存档
+    const draftGameState = {
+      ...gameState,
+      isDraft: true,
+      creationStep: 'world',
+      draftWorldId: worldId
+    };
+    const saveResult = await savesApi.create({
+      world_id: worldId,
+      name: `[草稿] ${draftWorldName}`,
+      game_state: draftGameState,
+      save_type: 'draft'
+    });
+
+    return {
+      saveId: saveResult.id,
+      worldId: worldId
+    };
+  } catch (error) {
+    console.warn('Failed to create draft save:', error.message);
+    return null;
+  }
+};
+
+// 保存草稿进度（每个创建步骤调用）
+export const saveDraftProgress = async (gameState) => {
+  try {
+    const available = await checkBackend();
+    if (!available) return false;
+
+    if (!gameState.draftSaveId) {
+      console.warn('No draft save ID, cannot save draft progress');
+      return false;
+    }
+
+    // 更新世界观（如果用户已填写名称，用 PUT 按 ID 更新）
+    if (gameState.world?.name && gameState.draftWorldId) {
+      await worldsApi.update(gameState.draftWorldId, {
+        name: gameState.world.name,
+        description: gameState.world.description || '',
+        image_url: gameState.world.imageUrl || ''
+      }).catch(() => {});
+    }
+
+    // 更新草稿存档的 game_state
+    await savesApi.update(gameState.draftSaveId, gameState);
+    return true;
+  } catch (error) {
+    console.warn('Failed to save draft progress:', error.message);
+    return false;
+  }
+};
+
+// 获取用户的草稿列表
+export const getDraftSaves = async () => {
+  try {
+    const available = await checkBackend();
+    if (!available) return [];
+
+    return await savesApi.getDrafts();
+  } catch (error) {
+    console.warn('Failed to get draft saves:', error.message);
+    return [];
+  }
+};
+
+// 将草稿升级为正式存档
+export const promoteDraftToSave = async (draftSaveId, gameState) => {
+  try {
+    const available = await checkBackend();
+    if (!available) return false;
+
+    const updatedGameState = {
+      ...gameState,
+      isDraft: false,
+      creationStep: null,
+      draftSaveId: null
+    };
+
+    await savesApi.updateWithSaveType(draftSaveId, updatedGameState, 'save');
+    return true;
+  } catch (error) {
+    console.warn('Failed to promote draft:', error.message);
+    return false;
+  }
+};
+

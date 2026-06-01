@@ -49,18 +49,32 @@ Create worlds, summon characters, and let AI weave your story.
 - Node.js 18+
 - npm
 
-### Install / 安装
+### 方式一：桌面启动器（推荐）/ Desktop Launcher (Recommended)
+
+双击 `launcher-app/dist/LoreEngine-Launcher/LoreEngine Launcher.exe` 即可启动。
+
+Double-click the launcher exe to start — no terminal needed.
+
+- 首次运行自动检测项目路径，或手动选择目录 / Auto-detects project path on first run
+- 一键启动前端 + 后端 / One-click start for both frontend and backend
+- 实时查看前端/后端日志 / Real-time log viewer for both services
+- 关闭窗口自动停止所有服务 / Closing the window stops all services
+
+![Launcher](img/launcher.png)
+
+### 方式二：命令行 / Command Line
+
+#### Install / 安装
 
 ```bash
 npm run install:all
 ```
 
-### Configure / 配置
+#### Configure / 配置
 
 1. 复制环境变量示例文件 / Copy the example env files:
 
 ```bash
-cp .env.example .env
 cp server/.env.example server/.env
 ```
 
@@ -79,10 +93,13 @@ ADMIN_PASSWORD=your_secure_password
 cp src/config.example.js src/config.js
 ```
 
-### Run / 运行
+#### Run / 运行
 
 ```bash
-# 开发模式 (前端 :3000, 后端 :29999) / Development
+# 一键启动（自动检查配置和依赖）/ One-click start (auto-checks config & deps)
+npm run start:dev
+
+# 或使用 concurrently / Or use concurrently
 npm run dev
 
 # 生产构建 / Production build
@@ -491,6 +508,12 @@ Provider fallback: if the requested provider has no API key, the system falls ba
 │   ├── database.js           #   SQLite 数据库模式与查询
 │   ├── config.js             #   运行时配置管理（.env 动态更新）
 │   └── data/                 #   SQLite 数据库 (运行时)
+├── launcher-app/             # Electron 桌面启动器 / Desktop launcher
+│   ├── main.js               #   主进程（子进程管理）/ Main process
+│   ├── preload.js            #   IPC 桥接 / IPC bridge
+│   ├── renderer/             #   GUI 界面 / GUI
+│   └── dist/                 #   打包输出 / Build output
+├── launcher.mjs              # 命令行启动器 / CLI launcher
 ├── Dockerfile                # 生产环境 Docker 镜像
 ├── docker-compose.yml        # 开发环境 Compose 配置
 └── docker-compose.prod.yml   # 生产环境 Compose 配置

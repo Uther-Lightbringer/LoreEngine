@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGameState } from '../store/gameState.jsx';
 import { generateWithAI, MAX_TOKENS } from '../services/aiService.js';
 import { generateImage } from '../services/imageService.js';
+import { saveDraftProgress } from '../services/saveService.js';
 import { defaultCharacter } from '../data/templates.js';
 import ImageModal from './ImageModal.jsx';
 import './ProtagonistCreation.css';
@@ -197,7 +198,7 @@ ${state.world.description || ''}
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!protagonist.name.trim()) {
       setError('请输入主角姓名');
       return;
@@ -235,6 +236,11 @@ ${state.world.description || ''}
         description: protagonist.personality || ""
       }
     });
+
+    dispatch({ type: 'SET_CREATION_STEP', payload: 'character' });
+
+    // 保存草稿进度
+    await saveDraftProgress(state);
 
     navigate('/create/character');
   };

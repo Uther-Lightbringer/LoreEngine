@@ -341,6 +341,20 @@ const gameReducer = (state, action) => {
         gameTime: skipTime,
         updatedAt: new Date().toISOString()
       };
+    case 'SET_CREATION_STEP':
+      return {
+        ...state,
+        creationStep: action.payload,
+        isDraft: action.payload !== null,
+        updatedAt: new Date().toISOString()
+      };
+    case 'SET_DRAFT_IDS':
+      return {
+        ...state,
+        draftSaveId: action.payload.saveId ?? state.draftSaveId,
+        draftWorldId: action.payload.worldId ?? state.draftWorldId,
+        updatedAt: new Date().toISOString()
+      };
     default:
       return state;
   }

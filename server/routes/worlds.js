@@ -30,6 +30,35 @@ router.get('/:id', (req, res) => {
   }
 });
 
+// 根据ID更新世界观
+router.put('/:id', (req, res) => {
+  try {
+    const { name, description, image_url } = req.body;
+
+    const existing = db.prepare('SELECT * FROM worlds WHERE id = ? AND user_id = ?').get(req.params.id, req.user.id);
+    if (!existing) {
+      return res.status(404).json({ error: 'World not found' });
+    }
+
+    const stmt = db.prepare(`
+      UPDATE worlds
+      SET name = ?, description = ?, image_url = ?, updated_at = datetime('now')
+      WHERE id = ? AND user_id = ?
+    `);
+    stmt.run(
+      name || existing.name,
+      description !== undefined ? description : existing.description,
+      image_url !== undefined ? image_url : existing.image_url,
+      req.params.id,
+      req.user.id
+    );
+
+    res.json({ id: parseInt(req.params.id), name: name || existing.name, description: description !== undefined ? description : existing.description, image_url: image_url !== undefined ? image_url : existing.image_url });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // 根据名称获取世界观
 router.get('/name/:name', (req, res) => {
   try {
