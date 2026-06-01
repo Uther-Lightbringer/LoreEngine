@@ -1,10 +1,7 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
-import { spawn, execSync } from 'child_process';
-import { existsSync, copyFileSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { join } from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { spawn, execSync } = require('child_process');
+const { existsSync, copyFileSync, readFileSync, writeFileSync, mkdirSync } = require('fs');
+const { join } = require('path');
 
 // --- 配置文件路径 ---
 const CONFIG_DIR = join(app.getPath('userData'), 'lore-engine-launcher');

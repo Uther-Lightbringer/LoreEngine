@@ -51,7 +51,9 @@ Create worlds, summon characters, and let AI weave your story.
 
 ### 方式一：桌面启动器（推荐）/ Desktop Launcher (Recommended)
 
-双击 `launcher-app/dist/LoreEngine-Launcher/LoreEngine Launcher.exe` 即可启动。
+双击根目录下 `LoreEngine-Launcher/LoreEngine Launcher.exe` 即可启动。
+
+Double-click `LoreEngine-Launcher/LoreEngine Launcher.exe` in the project root to start.
 
 Double-click the launcher exe to start — no terminal needed.
 

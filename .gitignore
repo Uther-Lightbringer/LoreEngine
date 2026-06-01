@@ -38,6 +38,7 @@ server/.env
 # Generated files
 CacheImages/
 *.tar.gz
+LoreEngine-Launcher/
 
 # Claude Code
 .claude/

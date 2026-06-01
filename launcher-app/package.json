@@ -2,48 +2,13 @@
   "name": "lore-engine-launcher",
   "version": "1.0.0",
   "description": "LoreEngine Desktop Launcher",
-  "type": "module",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "dev": "electron . --enable-logging",
-    "build": "electron-builder --win",
-    "build:dir": "electron-builder --win --dir",
-    "build:portable": "node build.mjs"
-  },
-  "build": {
-    "appId": "com.lore-engine.launcher",
-    "productName": "LoreEngine Launcher",
-    "directories": {
-      "output": "dist"
-    },
-    "files": [
-      "main.js",
-      "preload.js",
-      "renderer/**/*"
-    ],
-    "win": {
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
-        }
-      ],
-      "icon": null
-    },
-    "nsis": {
-      "oneClick": true,
-      "allowToChangeInstallationDirectory": false,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "shortcutName": "LoreEngine Launcher"
-    }
+    "build": "node build.mjs"
   },
   "devDependencies": {
-    "electron": "^35.0.0",
-    "electron-builder": "^26.0.0",
-    "electron-packager": "^17.1.2"
+    "electron": "^35.0.0"
   }
 }

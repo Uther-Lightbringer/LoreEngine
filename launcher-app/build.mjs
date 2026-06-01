@@ -1,10 +1,10 @@
-import { cpSync, rmSync, mkdirSync, writeFileSync, existsSync } from 'fs';
+import { cpSync, rmSync, mkdirSync, writeFileSync, existsSync, renameSync } from 'fs';
 import { join } from 'path';
 
-const ROOT = process.cwd();
-const DIST = join(ROOT, 'dist');
-const OUT = join(DIST, 'LoreEngine-Launcher');
-const ELECTRON_DIST = join(ROOT, 'node_modules', 'electron', 'dist');
+const APP_DIR = process.cwd();
+const ROOT = join(APP_DIR, '..');
+const OUT = join(ROOT, 'LoreEngine-Launcher');
+const ELECTRON_DIST = join(APP_DIR, 'node_modules', 'electron', 'dist');
 
 console.log('正在打包 LoreEngine Launcher...');
 
@@ -22,7 +22,6 @@ cpSync(ELECTRON_DIST, OUT, { recursive: true });
 const exeSrc = join(OUT, 'electron.exe');
 const exeDst = join(OUT, 'LoreEngine Launcher.exe');
 if (existsSync(exeSrc)) {
-  const { renameSync } = await import('fs');
   renameSync(exeSrc, exeDst);
 }
 
@@ -32,16 +31,15 @@ mkdirSync(appDir, { recursive: true });
 
 // 复制应用代码
 console.log('  复制应用代码...');
-cpSync(join(ROOT, 'main.js'), join(appDir, 'main.js'));
-cpSync(join(ROOT, 'preload.js'), join(appDir, 'preload.js'));
-cpSync(join(ROOT, 'renderer'), join(appDir, 'renderer'), { recursive: true });
+cpSync(join(APP_DIR, 'main.js'), join(appDir, 'main.js'));
+cpSync(join(APP_DIR, 'preload.js'), join(appDir, 'preload.js'));
+cpSync(join(APP_DIR, 'renderer'), join(appDir, 'renderer'), { recursive: true });
 
-// 创建 package.json
+// 创建 package.json（注意：不设 type:module，preload 需要 CommonJS）
 writeFileSync(join(appDir, 'package.json'), JSON.stringify({
   name: 'lore-engine-launcher',
   version: '1.0.0',
   main: 'main.js',
-  type: 'module',
 }, null, 2));
 
 // 创建启动脚本
