@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { getNovel, getProgress, parseChapter, getNarrativeSnapshots } from '../services/novelService.js';
+import React, { useState, useEffect, useRef } from 'react';
+import { getNovel, getProgress, parseChapter, getParseStatus, getNarrativeSnapshots } from '../services/novelService.js';
 import './NovelChapterSelect.css';
 
 const NovelChapterSelect = ({ novelId, onSelectChapter, onBack }) => {
@@ -13,9 +13,16 @@ const NovelChapterSelect = ({ novelId, onSelectChapter, onBack }) => {
   const [parsingChapter, setParsingChapter] = useState(null);
   const [narrativeSnapshots, setNarrativeSnapshots] = useState([]);
   const [showNarrativeHistory, setShowNarrativeHistory] = useState(false);
+  const [generateImages, setGenerateImages] = useState(false);
+  const [parseProgress, setParseProgress] = useState(0);
+  const [parseStep, setParseStep] = useState('');
+  const pollingRef = useRef(null);
 
   useEffect(() => {
     loadData();
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
   }, [novelId]);
 
   const loadData = async () => {
@@ -30,6 +37,12 @@ const NovelChapterSelect = ({ novelId, onSelectChapter, onBack }) => {
       setNovel(novelData);
       setProgress(progressData);
       setNarrativeSnapshots(snapshotsData.snapshots || []);
+
+      // 检查是否有正在解析的章节，恢复轮询
+      const parsingChapter = novelData?.chapters?.find(c => c.parse_status === 'parsing');
+      if (parsingChapter) {
+        startPolling(parsingChapter.id);
+      }
     } catch (err) {
       console.error('加载失败:', err);
       setError('加载失败，请重试');
@@ -38,18 +51,57 @@ const NovelChapterSelect = ({ novelId, onSelectChapter, onBack }) => {
     }
   };
 
-  const handleChapterClick = async (chapter) => {
-    // 如果章节未解析，先触发解析
-    if (!chapter.is_parsed) {
-      setParsingChapter(chapter.id);
+  // 轮询解析状态
+  const startPolling = (chapterId) => {
+    setParsingChapter(chapterId);
+    setParseProgress(0);
+    setParseStep('准备解析');
+    if (pollingRef.current) clearInterval(pollingRef.current);
+
+    pollingRef.current = setInterval(async () => {
       try {
-        await parseChapter(novelId, chapter.id);
-        await loadData(); // 重新加载以获取解析后的数据
+        const result = await getParseStatus(novelId, chapterId);
+        setParseProgress(result.progress || 0);
+        setParseStep(result.step || '');
+        if (result.status === 'completed') {
+          clearInterval(pollingRef.current);
+          pollingRef.current = null;
+          setParsingChapter(null);
+          setParseProgress(100);
+          setParseStep('');
+          await loadData();
+        } else if (result.status === 'error') {
+          clearInterval(pollingRef.current);
+          pollingRef.current = null;
+          setParsingChapter(null);
+          setParseProgress(0);
+          setParseStep('');
+          setError(`解析失败：${result.error || '未知错误'}`);
+        }
+      } catch (err) {
+        console.error('轮询解析状态失败:', err);
+      }
+    }, 2000);
+  };
+
+  const handleChapterClick = async (chapter) => {
+    // 如果章节正在解析中，忽略点击
+    if (parsingChapter === chapter.id) return;
+
+    // 如果章节未解析，触发解析
+    if (!chapter.is_parsed) {
+      try {
+        const result = await parseChapter(novelId, chapter.id, { generateImages });
+        if (result.status === 'completed') {
+          // 已解析完成（可能是之前解析过）
+          await loadData();
+        } else if (result.status === 'parsing') {
+          // 开始异步解析，启动轮询
+          startPolling(chapter.id);
+        }
       } catch (err) {
         console.error('解析章节失败:', err);
         setError('解析章节失败，请重试');
-      } finally {
-        setParsingChapter(null);
       }
       return;
     }
@@ -174,12 +226,22 @@ const NovelChapterSelect = ({ novelId, onSelectChapter, onBack }) => {
       )}
 
       <div className="chapters-list">
-        <h3>选择章节</h3>
+        <div className="chapters-list-header">
+          <h3>选择章节</h3>
+          <label className="generate-images-toggle">
+            <input
+              type="checkbox"
+              checked={generateImages}
+              onChange={(e) => setGenerateImages(e.target.checked)}
+            />
+            <span>生成图片</span>
+          </label>
+        </div>
         {novel?.chapters?.map((chapter, index) => (
           <div
             key={chapter.id}
             className={`chapter-item ${getChapterStatus(chapter)} ${parsingChapter === chapter.id ? 'parsing' : ''}`}
-            onClick={() => parsingChapter !== chapter.id && handleChapterClick(chapter)}
+            onClick={() => handleChapterClick(chapter)}
           >
             <div className="chapter-info">
               <div className="chapter-number">第{index + 1}章</div>
@@ -193,7 +255,16 @@ const NovelChapterSelect = ({ novelId, onSelectChapter, onBack }) => {
             </div>
             {parsingChapter === chapter.id && (
               <div className="parsing-overlay">
-                <span>AI解析中...</span>
+                <div className="parsing-progress-container">
+                  <div className="parsing-progress-bar">
+                    <div className="parsing-progress-fill" style={{ width: `${parseProgress}%` }}></div>
+                  </div>
+                  <div className="parsing-progress-info">
+                    <span className="parsing-spinner"></span>
+                    <span className="parsing-step-text">{parseStep}</span>
+                    <span className="parsing-percent">{Math.round(parseProgress)}%</span>
+                  </div>
+                </div>
               </div>
             )}
           </div>

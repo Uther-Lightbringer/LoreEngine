@@ -203,6 +203,35 @@ const initTables = () => {
     // 列可能已存在，忽略错误
   }
 
+  // 如果 parse_status 列不存在，添加它（兼容旧数据库）
+  // pending / parsing / completed / error
+  try {
+    db.exec("ALTER TABLE chapters ADD COLUMN parse_status TEXT DEFAULT 'pending'");
+  } catch (e) {
+    // 列可能已存在，忽略错误
+  }
+
+  // 如果 parse_error 列不存在，添加它
+  try {
+    db.exec("ALTER TABLE chapters ADD COLUMN parse_error TEXT");
+  } catch (e) {
+    // 列可能已存在，忽略错误
+  }
+
+  // 如果 parse_progress 列不存在，添加它（0-100的整数）
+  try {
+    db.exec("ALTER TABLE chapters ADD COLUMN parse_progress INTEGER DEFAULT 0");
+  } catch (e) {
+    // 列可能已存在，忽略错误
+  }
+
+  // 如果 parse_step 列不存在，添加它（当前步骤描述）
+  try {
+    db.exec("ALTER TABLE chapters ADD COLUMN parse_step TEXT");
+  } catch (e) {
+    // 列可能已存在，忽略错误
+  }
+
   // 创建索引
   db.exec('CREATE INDEX IF NOT EXISTS idx_worlds_user_id ON worlds (user_id)');
   db.exec('CREATE INDEX IF NOT EXISTS idx_worlds_updated_at ON worlds (updated_at DESC)');

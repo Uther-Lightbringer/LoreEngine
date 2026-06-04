@@ -318,6 +318,12 @@ const getStyleHintForType = (type) => {
   return styleMap[type] || styleMap['其他'];
 };
 
+// 更新章节解析进度
+const updateParseProgress = (chapterId, progress, step) => {
+  db.prepare('UPDATE chapters SET parse_progress = ?, parse_step = ? WHERE id = ?')
+    .run(progress, step, chapterId);
+};
+
 // 批量生成角色图片
 const generateCharacterImages = async (characters, novelType) => {
   const results = [];
@@ -675,6 +681,7 @@ router.get('/:novelId/chapter/:chapterId', async (req, res) => {
 router.post('/:novelId/chapter/:chapterId/parse', async (req, res) => {
   try {
     const { novelId, chapterId } = req.params;
+    const { generateImages = false } = req.body;
 
     // 验证所有权
     const novel = db.prepare('SELECT * FROM novels WHERE id = ? AND user_id = ?')
@@ -692,11 +699,31 @@ router.post('/:novelId/chapter/:chapterId/parse', async (req, res) => {
     }
 
     if (chapter.is_parsed) {
-      return res.json({ message: 'Chapter already parsed', chapterId });
+      return res.json({ message: 'Chapter already parsed', chapterId, status: 'completed' });
     }
+
+    // 如果正在解析中，返回当前状态
+    if (chapter.parse_status === 'parsing') {
+      return res.json({ message: 'Chapter is being parsed', chapterId, status: 'parsing' });
+    }
+
+    // 标记为解析中，初始化进度
+    db.prepare('UPDATE chapters SET parse_status = ?, parse_progress = 0, parse_step = ? WHERE id = ?')
+      .run('parsing', '准备解析', chapterId);
+
+    // 立即返回，后台执行解析
+    res.json({ message: 'Parse started', chapterId, status: 'parsing' });
+
+    // 后台异步执行解析
+    (async () => {
+      try {
 
     const worldSetting = novel.world_setting ? JSON.parse(novel.world_setting) : null;
     const novelType = novel.type || '其他';
+
+    // 不生成图片时4步各25%，生成图片时文本4步各12.5%+图片阶段50%
+    const textStep = generateImages ? 12.5 : 25;
+    let currentProgress = 0;
 
     // 识别角色
     const charactersPrompt = `分析以下小说章节，识别出场角色。
@@ -732,8 +759,8 @@ ${chapter.content.substring(0, 5000)}
     } catch (e) {
       console.error('Character recognition error:', e);
     }
-
-    // 识别场景
+    currentProgress += textStep;
+    updateParseProgress(chapterId, currentProgress, '识别场景中');
     const scenesPrompt = `分析以下小说章节，识别场景切换。
 
 【章节内容】
@@ -764,8 +791,8 @@ ${chapter.content.substring(0, 5000)}
     } catch (e) {
       console.error('Scene recognition error:', e);
     }
-
-    // 识别选择点
+    currentProgress += textStep;
+    updateParseProgress(chapterId, currentProgress, '检测软结局点中');
     const typeSpecificInstructions = {
       '言情': '重点识别情感冲突、表白、误会、和好等关键时刻的选择',
       '悬疑': '重点识别调查方向、信任谁、是否面对危险等选择',
@@ -816,6 +843,8 @@ ${chapter.content}
     } catch (e) {
       console.error('Soft end point detection error:', e);
     }
+    currentProgress += textStep;
+    updateParseProgress(chapterId, currentProgress, '识别选择点中');
 
     const choicePointPrompt = `分析以下小说章节，识别所有潜在选择点。
 
@@ -870,19 +899,42 @@ ${chapter.content}
     } catch (e) {
       console.error('Choice point recognition error:', e);
     }
+    currentProgress += textStep;
+    updateParseProgress(chapterId, currentProgress, generateImages ? '保存解析结果中' : '保存结果中');
 
-    // 生成角色图片（立绘和卡片）
-    if (characters.length > 0) {
+    // 生成角色图片（立绘和卡片）— 逐个更新进度
+    if (generateImages && characters.length > 0) {
       console.log(`[parseChapter] Generating images for ${characters.length} characters...`);
+      const imageTotal = characters.length + scenes.length;
+      const charWeight = characters.length / imageTotal * 50;
+      const charStep = charWeight / characters.length;
       const novelType = novel.type || '其他';
-      characters = await generateCharacterImages(characters, novelType);
+      const charResults = [];
+      for (let i = 0; i < characters.length; i++) {
+        const portraitUrl = await generateCharacterPortrait(characters[i], novelType);
+        const cardUrl = await generateCharacterCard(characters[i], novelType);
+        charResults.push({ ...characters[i], portrait_url: portraitUrl, card_url: cardUrl });
+        currentProgress += charStep;
+        updateParseProgress(chapterId, Math.round(currentProgress), `生成角色图片 ${i + 1}/${characters.length}`);
+      }
+      characters = charResults;
     }
 
-    // 生成场景背景图
-    if (scenes.length > 0) {
+    // 生成场景背景图 — 逐个更新进度
+    if (generateImages && scenes.length > 0) {
       console.log(`[parseChapter] Generating backgrounds for ${scenes.length} scenes...`);
+      const imageTotal = characters.length + scenes.length;
+      const sceneWeight = scenes.length / imageTotal * 50;
+      const sceneStep = sceneWeight / scenes.length;
       const novelType = novel.type || '其他';
-      scenes = await generateSceneImages(scenes, novelType);
+      const sceneResults = [];
+      for (let i = 0; i < scenes.length; i++) {
+        const backgroundUrl = await generateSceneBackground(scenes[i], novelType);
+        sceneResults.push({ ...scenes[i], background_url: backgroundUrl });
+        currentProgress += sceneStep;
+        updateParseProgress(chapterId, Math.round(currentProgress), `生成场景图片 ${i + 1}/${scenes.length}`);
+      }
+      scenes = sceneResults;
     }
 
     // 更新章节的角色和场景（包含图片URL）
@@ -958,18 +1010,47 @@ ${chapter.content}
     }
 
     // 标记章节已解析
-    db.prepare('UPDATE chapters SET is_parsed = 1 WHERE id = ?').run(chapterId);
+    db.prepare('UPDATE chapters SET is_parsed = 1, parse_status = ?, parse_progress = 100, parse_step = ? WHERE id = ?').run('completed', '解析完成', chapterId);
 
-    res.json({
-      message: 'Chapter parsed successfully',
-      chapterId,
-      charactersCount: characters.length,
-      scenesCount: scenes.length,
-      choicePointsCount: choicePoints.length,
-      softEndPointsCount: softEndPoints.length
-    });
+    console.log(`[parseChapter] Chapter ${chapterId} parsed successfully`);
+      } catch (error) {
+        console.error('Chapter parse error:', error);
+        db.prepare('UPDATE chapters SET parse_status = ?, parse_error = ? WHERE id = ?')
+          .run('error', error.message, chapterId);
+      }
+    })();
   } catch (error) {
     console.error('Chapter parse error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 查询章节解析状态
+router.get('/:novelId/chapter/:chapterId/parse-status', async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  try {
+    const { novelId, chapterId } = req.params;
+
+    const novel = db.prepare('SELECT id FROM novels WHERE id = ? AND user_id = ?')
+      .get(novelId, req.user.id);
+    if (!novel) {
+      return res.status(404).json({ error: 'Novel not found' });
+    }
+
+    const chapter = db.prepare('SELECT is_parsed, parse_status, parse_error, parse_progress, parse_step FROM chapters WHERE id = ? AND novel_id = ?')
+      .get(chapterId, novelId);
+    if (!chapter) {
+      return res.status(404).json({ error: 'Chapter not found' });
+    }
+
+    res.json({
+      chapterId,
+      status: chapter.is_parsed ? 'completed' : (chapter.parse_status || 'pending'),
+      progress: chapter.parse_progress || 0,
+      step: chapter.parse_step || '',
+      error: chapter.parse_error || null
+    });
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });

@@ -67,19 +67,30 @@ export const getChapter = async (novelId, chapterId) => {
 };
 
 // 解析章节（触发AI解析）
-export const parseChapter = async (novelId, chapterId) => {
+export const parseChapter = async (novelId, chapterId, { generateImages = false } = {}) => {
   const response = await fetch(`/api/novels/${novelId}/chapter/${chapterId}/parse`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       ...getAuthHeaders()
     },
-    body: JSON.stringify({})
+    body: JSON.stringify({ generateImages })
   });
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Parse failed' }));
     throw new Error(error.error || 'Parse failed');
+  }
+  return response.json();
+};
+
+// 查询章节解析状态
+export const getParseStatus = async (novelId, chapterId) => {
+  const response = await fetch(`/api/novels/${novelId}/chapter/${chapterId}/parse-status?t=${Date.now()}`, {
+    headers: { ...getAuthHeaders() }
+  });
+  if (!response.ok) {
+    throw new Error('Failed to get parse status');
   }
   return response.json();
 };

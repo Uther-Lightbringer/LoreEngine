@@ -1,4 +1,7 @@
 import config, { getFullProviderConfig, getDefaultProvider } from '../config.js';
+import logger from '../logger.js';
+
+const log = logger.tag('AI');
 
 // Token 限制常量
 export const MAX_TOKENS = {
@@ -39,6 +42,8 @@ export const generateWithAI = async (prompt, provider = 'deepseek', options = {}
       temperature
     };
 
+    log.debug(`[Anthropic] → ${baseUrl}/messages`, { model: body.model, max_tokens: body.max_tokens, prompt });
+
     const response = await fetch(`${baseUrl}/messages`, {
       method: 'POST',
       headers: {
@@ -51,11 +56,14 @@ export const generateWithAI = async (prompt, provider = 'deepseek', options = {}
 
     if (!response.ok) {
       const errorText = await response.text();
+      log.error(`[Anthropic] API error ${response.status}`, errorText);
       throw new Error(`Anthropic API error: ${errorText}`);
     }
 
     const data = await response.json();
-    return data.content[0].text;
+    const result = data.content[0].text;
+    log.debug(`[Anthropic] ← response`, result);
+    return result;
   } else if (effectiveProvider === 'minimax') {
     // MiniMax API
     const body = {
@@ -76,6 +84,8 @@ export const generateWithAI = async (prompt, provider = 'deepseek', options = {}
       body.max_completion_tokens = Math.min(maxTokens, 2048);
     }
 
+    log.debug(`[MiniMax] → ${baseUrl}/v1/text/chatcompletion_v2`, { model: body.model, max_completion_tokens: body.max_completion_tokens, prompt });
+
     const response = await fetch(`${baseUrl}/v1/text/chatcompletion_v2`, {
       method: 'POST',
       headers: {
@@ -87,6 +97,7 @@ export const generateWithAI = async (prompt, provider = 'deepseek', options = {}
 
     if (!response.ok) {
       const errorText = await response.text();
+      log.error(`[MiniMax] API error ${response.status}`, errorText);
       throw new Error(`MiniMax API error: ${errorText}`);
     }
 
@@ -96,7 +107,9 @@ export const generateWithAI = async (prompt, provider = 'deepseek', options = {}
       throw new Error(`MiniMax API 响应格式异常`);
     }
 
-    return data.choices[0].message.content;
+    const result = data.choices[0].message.content;
+    log.debug(`[MiniMax] ← response`, result);
+    return result;
   } else {
     // OpenAI-compatible API (DeepSeek, OpenAI, Custom)
     const body = {
@@ -119,6 +132,8 @@ export const generateWithAI = async (prompt, provider = 'deepseek', options = {}
       body.max_tokens = maxTokens;
     }
 
+    log.debug(`[${effectiveProvider}] → ${baseUrl}/chat/completions`, { model: body.model, max_tokens: body.max_tokens, json_response: jsonResponse, prompt });
+
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -130,34 +145,46 @@ export const generateWithAI = async (prompt, provider = 'deepseek', options = {}
 
     if (!response.ok) {
       const errorText = await response.text();
+      log.error(`[${effectiveProvider}] API error ${response.status}`, errorText);
       throw new Error(`API error: ${errorText}`);
     }
 
     const data = await response.json();
-    return data.choices[0].message.content;
+    const result = data.choices[0].message.content;
+    log.debug(`[${effectiveProvider}] ← response`, result);
+    return result;
   }
 };
 
 // 提取JSON的辅助函数
 export const extractJSON = (text) => {
+  log.debug('extractJSON input length:', text?.length);
+
   const objectMatch = text.match(/\{[\s\S]*\}/);
   if (objectMatch) {
     try {
-      return JSON.parse(objectMatch[0]);
+      const parsed = JSON.parse(objectMatch[0]);
+      log.debug('extractJSON: parsed object successfully');
+      return parsed;
     } catch (e) {
-      console.error('Failed to parse JSON object:', e);
+      log.warn('extractJSON: failed to parse JSON object:', e.message);
+      log.debug('extractJSON: raw match (first 500 chars):', objectMatch[0].slice(0, 500));
     }
   }
 
   const arrayMatch = text.match(/\[[\s\S]*\]/);
   if (arrayMatch) {
     try {
-      return JSON.parse(arrayMatch[0]);
+      const parsed = JSON.parse(arrayMatch[0]);
+      log.debug('extractJSON: parsed array successfully');
+      return parsed;
     } catch (e) {
-      console.error('Failed to parse JSON array:', e);
+      log.warn('extractJSON: failed to parse JSON array:', e.message);
+      log.debug('extractJSON: raw match (first 500 chars):', arrayMatch[0].slice(0, 500));
     }
   }
 
+  log.warn('extractJSON: no JSON found in text');
   return null;
 };
 
